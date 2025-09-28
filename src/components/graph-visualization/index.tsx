@@ -1,11 +1,10 @@
-import { useWindowSize } from "@/hooks/use-window-size";
-import { generateElements, getCompleteGraph } from "@/lib/graphs";
+import { generateElements } from "@/lib/graphs";
 import { Graph } from "@/types";
-import cytoscape, { Core, ElementsDefinition } from "cytoscape";
+import { Core } from "cytoscape";
 import { motion } from "motion/react";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { WritingText } from "../ui/shadcn-io/writing-text";
-import { generateVisualization } from "./visualization";
+import { assignColorNumber, generateVisualization } from "./visualization";
 
 interface GraphVisualizationProps {
     graph: Graph,
@@ -17,14 +16,12 @@ export default function GraphVisualization({
     setGraph
 }: GraphVisualizationProps) {
     const cyContainerRef = useRef<HTMLElement | null>(null);
-    const { width: windowWidth, height: windowHeight } = useWindowSize();
     let cy: Core;
 
     useEffect(() => {
         const elements = generateElements(graph);
         
         if (elements) {
-            console.log('geração dos elementos pela matriz');
             setGraph(prev => ({
                 ...prev,
                 elements
@@ -35,10 +32,11 @@ export default function GraphVisualization({
 
     useEffect(() => {
         if (graph.elements) {
-            console.log('geração da visualização pelos elementos');
             cy = generateVisualization(graph, cyContainerRef);
+
+            cy.elements().on('select', assignColorNumber);
         }
-    }, [graph.elements, windowWidth, windowHeight]);
+    }, [graph.elements]);
 
     return (
         <>

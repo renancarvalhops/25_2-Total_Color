@@ -10,13 +10,13 @@ const getGeneralGraph = (matrix: number[][]): ElementsDefinition => {
 
     for (let i = 0; i < order; i++) {
         elements.nodes.push({
-            data: { id: `v${i + 1}` }
+            data: { id: `v${i + 1}`, hasConflict: false }
         });
 
         for (let j = i + 1; j < order; j++) {
             if (matrix[i][j]) {
                 elements.edges.push({
-                    data: { id: `v${i+1}v${j+1}`, source: `v${i+1}`, target: `v${j+1}` }
+                    data: { id: `v${i+1}v${j+1}`, source: `v${i+1}`, target: `v${j+1}`, hasConflict: false }
                 });
             }
         }

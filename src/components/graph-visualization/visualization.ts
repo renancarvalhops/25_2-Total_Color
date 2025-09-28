@@ -1,5 +1,6 @@
+import { validateTotalColoring } from "@/lib/graphs/coloring";
 import { Graph } from "@/types";
-import cytoscape, { Core } from "cytoscape";
+import cytoscape, { Collection, Core, EventObject } from "cytoscape";
 import { RefObject } from "react";
 
 const generateVisualization = (graph: Graph, containerRef: RefObject<HTMLElement | null>): Core => {
@@ -10,8 +11,9 @@ const generateVisualization = (graph: Graph, containerRef: RefObject<HTMLElement
             {
                 selector: 'node',
                 style: {
-                    'background-color': '#ccc',
-                    'font-size': '14px',
+                    'background-color': '#526D82',
+                    'color': '#FFF',
+                    'font-size': '16px',
                     'font-weight': 'lighter',
                     'height': '50px',
                     'label': 'data(id)',
@@ -20,32 +22,75 @@ const generateVisualization = (graph: Graph, containerRef: RefObject<HTMLElement
                 }
             },
             {
-                selector: 'node:selected',
-                style: {
-                    'background-color': '#0000aa',
-                    'color': '#fff'
-                }
-            },
-            {
                 selector: 'edge',
                 style: {
-                    'line-color': '#ccc',
-                    'width': 3
+                    'color': '#FFF',
+                    'font-size': '16px',
+                    'line-color': '#526D82',
+                    'width': 5
                 }
             },
             {
-                selector: 'edge:selected',
+                selector: '[?hasConflict]',
                 style: {
-                    'line-color': '#0000af'
+                    'background-color': '#DC143C',
+                    'line-color': '#DC143C',
+                }
+            },
+            {
+                selector: ':selected',
+                style: {
+                    'background-color': '#48B3AF',
+                    'color': '#EEE',
+                    'line-color': '#48B3AF',
                 }
             }
         ],
         layout: {
-            name: 'random'
+            name: 'circle'
         }
     });
 
     return cy;
 };
 
-export { generateVisualization }
+const assignColorNumber = (event: EventObject): void => {
+    const elements: Collection = event.target;
+    let hasFirstKeypress = true;
+
+    const keyboardEventHandler = (event: KeyboardEvent) => {
+        if (RegExp(/\d/g).test(event.key)) {
+            if (hasFirstKeypress) {
+                hasFirstKeypress = false;
+                elements.data('colorNumber', event.key);
+            } else {
+                elements.data('colorNumber', elements.data('colorNumber') + event.key);
+            }
+
+            elements.style('label', elements.data('colorNumber'));
+        } else {
+            elements.unselect();
+        }
+    };
+
+    window.addEventListener('keypress', keyboardEventHandler);
+
+    elements.on('unselect', () => {
+        window.removeEventListener('keypress', keyboardEventHandler);
+        showTotalColoringValidation(elements);
+    });
+};
+
+const showTotalColoringValidation = (elements: Collection) => {
+    elements.forEach(element => {
+        const { hasConflict, adjacentElements } = validateTotalColoring(element);
+        element.data('hasConflict', hasConflict);
+
+        adjacentElements.forEach(adjacentElement => {
+            const { hasConflict } = validateTotalColoring(adjacentElement);
+            adjacentElement.data('hasConflict', hasConflict);
+        });
+    });
+};
+
+export { generateVisualization, assignColorNumber }

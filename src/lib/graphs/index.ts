@@ -8,7 +8,7 @@ const generateElements = (graph: Graph): ElementsDefinition | null => {
     let elements: ElementsDefinition | null = null;
 
     if (graph.mode === 'free' && graph.matrix) {
-        elements = getGeneralGraph(graph.matrix);
+        elements = { ...getGeneralGraph(graph.matrix) };
     }
 
     return elements;
