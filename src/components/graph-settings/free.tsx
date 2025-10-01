@@ -10,7 +10,7 @@ type Matrix = {
 
 interface FreeSettingsProps {
     setGraph: Dispatch<SetStateAction<Graph>>
-};
+}
 
 export default function FreeSettings({
     setGraph
@@ -59,23 +59,32 @@ export default function FreeSettings({
             className="flex flex-col gap-4"
             onSubmit={handleSubmit}
         >
-            <Dropzone
-                accept={{ 'text/plain': ['.txt'] }}
-                maxFiles={1}
-                maxSize={1024 * 1024 * 10}
-                onDrop={handleDrop}
-                onError={console.error}
-                src={files}
-            >
-                <DropzoneEmptyState />
-                <DropzoneContent />
-            </Dropzone>
+            <section className="flex flex-col gap-4">
+                <h2 className="border-b-2 border-b-gray-500 font-bold">
+                    Carregue um arquivo .txt da matriz
+                </h2>
 
-            <pre className="text-center">
-                {matrix?.text}
-            </pre>
+                <div className="flex flex-col gap-4">
+                    <Dropzone
+                        accept={{ 'text/plain': ['.txt'] }}
+                        maxFiles={1}
+                        maxSize={1024 * 1024 * 10}
+                        onDrop={handleDrop}
+                        onError={console.error}
+                        src={files}
+                    >
+                        <DropzoneEmptyState />
 
-            <Button>Gerar Grafo</Button>
+                        <DropzoneContent />
+                    </Dropzone>
+
+                    <pre className="text-center">
+                        {matrix?.text}
+                    </pre>
+                </div>
+            </section>
+
+            <Button disabled={!files}>Gerar Grafo</Button>
         </form>
     );
 }

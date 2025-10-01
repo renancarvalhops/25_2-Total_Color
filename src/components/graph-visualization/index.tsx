@@ -28,7 +28,7 @@ export default function GraphVisualization({
             }));
         }
 
-    }, [graph.matrix]);
+    }, [graph.matrix, graph.order]);
 
     useEffect(() => {
         if (graph.elements) {

@@ -1,3 +1,4 @@
+"use client"
 import { Settings2 } from "lucide-react";
 import { motion } from "motion/react";
 import { Dispatch, RefObject, SetStateAction, useState } from "react";
@@ -23,7 +24,7 @@ export default function GraphSettings({
         {
             value: 'classes',
             name: 'Classes',
-            content: <ClassesSettings />
+            content: <ClassesSettings setGraph={setGraph} />
         },
         {
             value: 'free',

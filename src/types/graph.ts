@@ -1,9 +1,10 @@
 import { ElementsDefinition } from "cytoscape"
 
 type Graph = {
+    mode: string,
     elements?: ElementsDefinition,
     matrix?: number[][],
-    mode: string
+    order?: number
 }
 
 export type { Graph }
