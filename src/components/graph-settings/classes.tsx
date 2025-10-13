@@ -1,28 +1,28 @@
-import { Dispatch, FormEvent, FormEventHandler, SetStateAction, useState } from "react";
+import React, { FormEventHandler, useState } from "react";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Input } from "../ui/input";
-import { Graph } from "@/types";
+import { getCompleteGraphMatrix, getGraphElements } from "@/lib/graphs";
+import { useGraph } from "@/contexts/GraphContext";
 
-interface ClassesSettingsProps {
-    setGraph: Dispatch<SetStateAction<Graph>>
-}
-
-export default function ClassesSettings({
-    setGraph
-}: ClassesSettingsProps) {
+export default function ClassesSettings() {
+    const { updateGraph } = useGraph();
     const [graphClass, setGraphClass] = useState('');
     const [qtdVertices, setQtdVertices] = useState(3);
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
         if (graphClass === 'completos') {
-            setGraph(prev => ({
-                ...prev,
-                order: qtdVertices
-            }));
+            const matrix = getCompleteGraphMatrix(qtdVertices);
+            const elements = getGraphElements(matrix);
+
+            updateGraph({
+                matrix,
+                elements,
+                layout: 'circle'
+            });
         }
     };
 

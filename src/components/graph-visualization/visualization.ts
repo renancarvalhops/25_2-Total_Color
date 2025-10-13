@@ -1,4 +1,4 @@
-import { validateTotalColoring } from "@/lib/graphs/coloring";
+import { validateTotalColoring } from "@/lib/graphs";
 import { Graph } from "@/types";
 import cytoscape, { Collection, Core, EventObject } from "cytoscape";
 import { RefObject } from "react";
@@ -47,7 +47,7 @@ const generateVisualization = (graph: Graph, containerRef: RefObject<HTMLElement
             }
         ],
         layout: {
-            name: 'circle'
+            name: graph.layout ?? 'circle'
         }
     });
 

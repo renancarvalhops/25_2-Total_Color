@@ -1,57 +1,57 @@
-import { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import { FormEventHandler, useState } from "react";
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "../ui/shadcn-io/dropzone";
 import { Button } from "../ui/button";
-import { Graph } from "@/types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { useGraph } from "@/contexts/GraphContext";
+import { GraphFile } from "@/types";
+import { getGraphElements, getGraphMatrix } from "@/lib/graphs";
 
-type Matrix = {
-    text: string,
-    data: number[][]
-};
+export default function FreeSettings() {
+    const { updateGraph } = useGraph();
+    const [files, setFiles] = useState<File[]>();
+    const [graphFile, setGraphFile] = useState<GraphFile>();
+    const [layout, setLayout] = useState<string>();
 
-interface FreeSettingsProps {
-    setGraph: Dispatch<SetStateAction<Graph>>
-}
-
-export default function FreeSettings({
-    setGraph
-}: FreeSettingsProps) {
-    const [files, setFiles] = useState<File[] | undefined>();
-    const [matrix, setMatrix] = useState<Matrix>();
-
-    const handleDrop = (files: File[]) => {
-        setFiles(files);
-
+    const handleDrop = (newFiles: File[]) => {
+        setFiles(newFiles);
+        
         const reader = new FileReader();
+
         reader.onload = () => {
             if (typeof reader.result === 'string') {
-                const lines = reader.result.split(/\s+/g);
-                const newMatrix: Matrix = {
-                    text: '',
-                    data: []
-                };
+                const isG6 = (str: string) => /.+\.g6$/g.test(str);
 
-                lines.forEach((line, lineNumber) => {
-                    newMatrix.data.push([]);
-                    line.split(',').forEach(char => {
-                        newMatrix.text += ` ${char}`;
-                        newMatrix.data[lineNumber].push(Number(char));
+                if (isG6(newFiles[0].name)) {
+                    setGraphFile({
+                        type: 'g6',
+                        text: reader.result.split(/\s+/g)[0]
                     });
-                    newMatrix.text += '\n';
-                });
-
-                setMatrix(newMatrix);
+                } else {
+                    setGraphFile({
+                        type: 'txt',
+                        text: reader.result
+                    });
+                }
             }
         };
-        reader.readAsText(files[0]);
+
+        reader.readAsText(newFiles[0]);
     };
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        setGraph(prev => ({
-            ...prev,
-            matrix: matrix?.data
-        }));
+        if (graphFile) {
+            const matrix = getGraphMatrix(graphFile);
+            const elements = getGraphElements(matrix);
+    
+            updateGraph({
+                file: graphFile,
+                matrix,
+                elements,
+                layout
+            });
+        }
     };
 
     return (
@@ -61,12 +61,12 @@ export default function FreeSettings({
         >
             <section className="flex flex-col gap-4">
                 <h2 className="border-b-2 border-b-gray-500 font-bold">
-                    Carregue um arquivo .txt da matriz
+                    Carregue um arquivo .txt da matriz ou .g6
                 </h2>
 
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 items-center">
                     <Dropzone
-                        accept={{ 'text/plain': ['.txt'] }}
+                        accept={{ 'text/plain': ['.txt', '.g6'] }}
                         maxFiles={1}
                         maxSize={1024 * 1024 * 10}
                         onDrop={handleDrop}
@@ -78,13 +78,35 @@ export default function FreeSettings({
                         <DropzoneContent />
                     </Dropzone>
 
-                    <pre className="text-center">
-                        {matrix?.text}
+                    <pre className="max-h-72 max-w-72 overflow-auto">
+                        {graphFile?.text}
                     </pre>
                 </div>
+
+                <section className={`${graphFile ? 'flex flex-col gap-4' : 'hidden'}`}>
+                    <h2 className="border-b-2 border-b-gray-500 font-bold">
+                        Layout
+                    </h2>
+
+                    <div className="flex gap-4">
+                        <Select value={layout} onValueChange={setLayout}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Selecione um layout" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="random">Random</SelectItem>
+                                <SelectItem value="grid">Grid</SelectItem>
+                                <SelectItem value="circle">Circle</SelectItem>
+                                <SelectItem value="concentric">Concentric</SelectItem>
+                                <SelectItem value="breadthfirst">Breadthfirst</SelectItem>
+                                <SelectItem value="cose">Cose</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </section>
             </section>
 
-            <Button disabled={!files}>Gerar Grafo</Button>
+            <Button disabled={!graphFile && !files}>Gerar Grafo</Button>
         </form>
     );
 }

@@ -1,42 +1,21 @@
-import { generateElements } from "@/lib/graphs";
-import { Graph } from "@/types";
 import { Core } from "cytoscape";
 import { motion } from "motion/react";
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { WritingText } from "../ui/shadcn-io/writing-text";
 import { assignColorNumber, generateVisualization } from "./visualization";
+import { useGraph } from "@/contexts/GraphContext";
 
-interface GraphVisualizationProps {
-    graph: Graph,
-    setGraph: Dispatch<SetStateAction<Graph>>
-}
-
-export default function GraphVisualization({
-    graph,
-    setGraph
-}: GraphVisualizationProps) {
+export default function GraphVisualization() {
+    const { graph } = useGraph();
     const cyContainerRef = useRef<HTMLElement | null>(null);
     let cy: Core;
 
     useEffect(() => {
-        const elements = generateElements(graph);
-        
-        if (elements) {
-            setGraph(prev => ({
-                ...prev,
-                elements
-            }));
-        }
-
-    }, [graph.matrix, graph.order]);
-
-    useEffect(() => {
         if (graph.elements) {
             cy = generateVisualization(graph, cyContainerRef);
-
             cy.elements().on('select', assignColorNumber);
         }
-    }, [graph.elements]);
+    });
 
     return (
         <>

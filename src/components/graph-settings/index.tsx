@@ -1,22 +1,17 @@
 "use client"
 import { Settings2 } from "lucide-react";
 import { motion } from "motion/react";
-import { Dispatch, RefObject, SetStateAction, useState } from "react";
+import { RefObject, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import ClassesSettings from "./classes";
-import { Graph } from "@/types";
 import FreeSettings from "./free";
 
 interface GraphSettingsProps {
-    dragConstraintRef: RefObject<HTMLElement | null>,
-    graph: Graph,
-    setGraph: Dispatch<SetStateAction<Graph>>
+    dragConstraintRef: RefObject<HTMLElement | null>
 }
 
 export default function GraphSettings({
-    dragConstraintRef,
-    graph,
-    setGraph
+    dragConstraintRef
 }: GraphSettingsProps) {
     const [isShowing, setIsShowing] = useState(false);
 
@@ -24,12 +19,12 @@ export default function GraphSettings({
         {
             value: 'classes',
             name: 'Classes',
-            content: <ClassesSettings setGraph={setGraph} />
+            content: <ClassesSettings />
         },
         {
             value: 'free',
             name: 'Livre',
-            content: <FreeSettings setGraph={setGraph} />
+            content: <FreeSettings />
         }
     ];
 
@@ -57,10 +52,7 @@ export default function GraphSettings({
                 <motion.div
                     className="bg-gray-100 p-4 rounded-md shadow-lg"
                 >
-                    <Tabs
-                        value={graph.mode}
-                        onValueChange={(value) => setGraph({...graph, mode: value})} 
-                    >
+                    <Tabs defaultValue={tabs[0].value}>
                         <TabsList>
                             {tabs.map(tab => (
                                 <TabsTrigger key={tab.value} value={tab.value}>
