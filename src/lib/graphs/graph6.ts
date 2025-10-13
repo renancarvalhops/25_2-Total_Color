@@ -1,6 +1,6 @@
 const R = (x: string): string => {
     let charCodes = '';
-    let bitVector = (x.length % 6 === 0) ? x : x.padEnd(x.length + (6 - x.length % 6), '0');
+    const bitVector = (x.length % 6 === 0) ? x : x.padEnd(x.length + (6 - x.length % 6), '0');
 
     for (let i = 0; i < bitVector.length / 6; i++) {
         const bits = bitVector.slice(6 * i, 6 * (i + 1));
@@ -96,7 +96,7 @@ const graph6ToMatrix = (graph6: string): number[][] => {
     }
 
     const n = N_inverse(charCodesOfN);
-    let x = R_inverse(charCodesOfX);
+    const x = R_inverse(charCodesOfX);
 
     const matrix = Array.from({ length: n }, () => Array(n).fill(0));
 
