@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Input } from "../ui/input";
-import { getCompleteGraphMatrix, getGraphElements } from "@/lib/graphs";
+import { getCompleteGraphMatrix, getCompleteGraphTotalColoring, getGraphElements } from "@/lib/graphs";
 import { useGraph } from "@/contexts/GraphContext";
 
 export default function ClassesSettings() {
@@ -17,6 +17,7 @@ export default function ClassesSettings() {
         if (graphClass === 'completos') {
             const matrix = getCompleteGraphMatrix(qtdVertices);
             const elements = getGraphElements(matrix);
+            console.log(getCompleteGraphTotalColoring(qtdVertices));
 
             updateGraph({
                 matrix,
