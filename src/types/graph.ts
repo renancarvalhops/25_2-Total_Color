@@ -12,6 +12,11 @@ export interface Graph {
     class?: "completes"
 }
 
-export interface GraphValues extends Graph {
-    renderigs?: number
+export interface GraphValues {
+    file?: GraphFile,
+    matrix?: number[][],
+    totalColoring?: string[][],
+    layout?: string,
+    renderings?: number,
+    class?: "completes"
 }
