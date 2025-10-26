@@ -3,7 +3,13 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Input } from "../ui/input";
-import { getCompleteGraphMatrix, getCompleteGraphTotalColoring } from "@/lib/graphs";
+import {
+    getCompleteGraphMatrix,
+    getCompleteGraphTotalColoring,
+    getCycleGraphMatrix,
+    getPathGraphMatrix,
+    getPathGraphTotalColoring
+} from "@/lib/graphs";
 import { useGraph } from "@/contexts/GraphContext";
 
 export default function ClassesSettings() {
@@ -22,7 +28,25 @@ export default function ClassesSettings() {
                 matrix,
                 totalColoring,
                 layout: 'circle',
-                class: 'completes'
+                class: graphClass
+            });
+        } else if (graphClass === 'paths') {
+            const matrix = getPathGraphMatrix(order);
+            const totalColoring = getPathGraphTotalColoring(order);
+
+            updateGraph({
+                matrix,
+                totalColoring,
+                layout: 'breadthfirst',
+                class: graphClass
+            });
+        } else if (graphClass === 'cycles') {
+            const matrix = getCycleGraphMatrix(order);
+
+            updateGraph({
+                matrix,
+                layout: 'circle',
+                class: graphClass
             });
         }
     };
@@ -44,6 +68,8 @@ export default function ClassesSettings() {
                         </SelectTrigger>                    
                         <SelectContent>
                             <SelectItem value="completes">Completos</SelectItem>
+                            <SelectItem value="paths">Caminhos</SelectItem>
+                            <SelectItem value="cycles">Ciclos</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -51,7 +77,7 @@ export default function ClassesSettings() {
 
             <section className={`${graphClass ? 'flex' : 'hidden'} flex-col gap-4`}>
                 <h2 className="border-b-2 border-b-gray-500 font-bold">
-                    Configurações dos {graphClass}
+                    Configurações da classe
                 </h2>
 
                 <div className="flex gap-4">

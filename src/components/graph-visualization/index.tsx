@@ -46,8 +46,9 @@ export default function GraphVisualization() {
             setColoring(new Map());
             cy.elements().on('select', (e) => assignColorNumber(e, updateColor));
 
-            if (graph.class) {
-                showColoring(cy, graph, updateColor);
+            if (graph.totalColoring) {
+                const orientation = graph.class !== 'completes' ? 'index' : 'color';
+                showColoring(cy, graph.totalColoring, updateColor, orientation);
             }
         }
     }, [graph.renderings]);

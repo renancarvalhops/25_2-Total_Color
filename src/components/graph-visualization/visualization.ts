@@ -180,29 +180,66 @@ const convertToElementId = (elementLabel: string): string => {
     return elementId;
 }
 
-const showColoring = (cy: Core, graph: Graph, updateColor: (elementId: string, previousColor: string, currentColor: string) => void) => {
+const showColoring = (
+    cy: Core,
+    totalColoring: string[][],
+    updateColor: (elementId: string, previousColor: string, currentColor: string) => void,
+    orientation: "color" | "index"
+) => {
     let counter = 1;
 
-    graph.totalColoring?.forEach((elementsLabels, color) => {
-        elementsLabels.forEach((elementLabel) => {
-            setTimeout(() => {
-                const element = cy.$id(convertToElementId(elementLabel));
-                const colorNumber = String(color + 1);
-
-                element.data('colorNumber', colorNumber);
-                element.style('label', element.data('colorNumber'));
-                element.addClass('highlated');
-
+    if (orientation === 'color') {
+        totalColoring?.forEach((elementsLabels, color) => {
+            elementsLabels.forEach((elementLabel) => {
                 setTimeout(() => {
-                    element.removeClass('highlated');
-                }, 1000);
-
-                updateColor(element.data('id'), '', colorNumber);
-            }, 1500 * counter);
-
-            counter++;
+                    const element = cy.$id(convertToElementId(elementLabel));
+                    const colorNumber = String(color + 1);
+    
+                    element.data('colorNumber', colorNumber);
+                    element.style('label', element.data('colorNumber'));
+                    element.addClass('highlated');
+    
+                    setTimeout(() => {
+                        element.removeClass('highlated');
+                    }, 1000);
+    
+                    updateColor(element.data('id'), '', colorNumber);
+                }, 1500 * counter);
+    
+                counter++;
+            });
         });
-    });
+    } else {
+        const maxElementsLabels = totalColoring.reduce((prev, curr) => (
+            prev.length > curr.length ? prev : curr
+        ));
+
+        const maxElementIndex = maxElementsLabels.length - 1;
+        const maxColorIndex = totalColoring.length - 1;
+
+        for (let elementIndex = 0; elementIndex <= maxElementIndex; elementIndex++) {
+            for (let colorIndex = 0; colorIndex <= maxColorIndex; colorIndex++) {
+                if (elementIndex < totalColoring[colorIndex].length) {
+                    setTimeout(() => {
+                        const element = cy.$id(convertToElementId(totalColoring[colorIndex][elementIndex]));
+                        const colorNumber = String(colorIndex + 1);
+        
+                        element.data('colorNumber', colorNumber);
+                        element.style('label', element.data('colorNumber'));
+                        element.addClass('highlated');
+        
+                        setTimeout(() => {
+                            element.removeClass('highlated');
+                        }, 1000);
+        
+                        updateColor(element.data('id'), '', colorNumber);
+                    }, 1500 * counter);
+        
+                    counter++;
+                }
+            }
+        }
+    }
 }
 
 export { generateVisualization, assignColorNumber, showColoring }
