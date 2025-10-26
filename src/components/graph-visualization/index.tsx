@@ -3,39 +3,39 @@ import { useEffect, useRef, useState } from "react";
 import { WritingText } from "../ui/shadcn-io/writing-text";
 import { assignColorNumber, generateVisualization } from "./visualization";
 import { useGraph } from "@/contexts/GraphContext";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 export default function GraphVisualization() {
     const { graph } = useGraph();
     const cyContainerRef = useRef<HTMLElement | null>(null);
-    const [colors, setColors] = useState<Map<string, number>>(new Map());
-    const colorsList = Array.from(colors.keys());
+    const [coloring, setColoring] = useState<Map<string, string[]>>(new Map());
+    const colors = Array.from(coloring.keys());
 
-    const updateColor = (previousColor: string, currentColor: string) => {
-        setColors((prev) => {
-            const newColors = new Map(prev);
-            let qtd: number | undefined;
+    const updateColor = (elementId: string, previousColor: string, currentColor: string) => {
+        setColoring((prev) => {
+            const updatedColoring = new Map(prev);
+            let ids: string[] | undefined;
     
-            qtd = newColors.get(previousColor);
-            if (qtd) {
-                if (qtd > 1) {
-                    newColors.set(previousColor, qtd - 1);
+            ids = updatedColoring.get(previousColor);
+            if (ids) {
+                if (ids.length > 1) {
+                    updatedColoring.set(previousColor, [...ids.filter(id => id !== elementId)]);
                 } else {
-                    newColors.delete(previousColor);
+                    updatedColoring.delete(previousColor);
                 }
             }
 
             if (currentColor) {
-                qtd = newColors.get(currentColor);
-                if (qtd) {
-                    newColors.set(currentColor, qtd + 1);
+                ids = updatedColoring.get(currentColor);
+                if (ids) {
+                    updatedColoring.set(currentColor, [...ids, elementId]);
                 } else {
-                    newColors.set(currentColor, 1);
+                    updatedColoring.set(currentColor, [elementId]);
                 }
             }
 
 
-            return newColors;
+            return updatedColoring;
         });
     }
 
@@ -43,11 +43,11 @@ export default function GraphVisualization() {
         const cy = generateVisualization(graph, cyContainerRef);
 
         if (cy) {
-            setColors(new Map());
+            setColoring(new Map());
             cy.elements().on('select', (e) => assignColorNumber(e, updateColor));
         }
     }, [graph.renderings]);
-
+    
 
     return (
         <>
@@ -70,6 +70,7 @@ export default function GraphVisualization() {
                     />
                 </section>                    
             }
+
             <motion.section
                 ref={cyContainerRef}
                 className="h-full w-full"
@@ -78,47 +79,48 @@ export default function GraphVisualization() {
                 transition={{ duration: .7 }}
             />
 
-            <Collapsible
-                className="absolute bg-white bottom-5 left-5 p-2 rounded-md z-10"
-                defaultOpen
-            >
-                <CollapsibleTrigger>
-                    <div className="font-bold p-2">
-                        Painel de Coloração Total
-                    </div>
-                </CollapsibleTrigger>
+            {
+                colors.length > 0 &&
+                <motion.section
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <Card className="absolute bottom-5 left-5 z-10 w-full max-w-sm">
+                        <CardHeader>
+                            <CardTitle>
+                                Coloração Total
+                            </CardTitle>
+                        </CardHeader>
 
-                <CollapsibleContent>
-                    <div className="border-t-2 border-t-gray-500 flex flex-col gap-2 pt-2">
-                        <div className="flex gap-2">
-                            <span>Número cromático total:</span>
-                        </div>
+                        <CardContent className="flex flex-col gap-2">
+                            {/* <div className="flex gap-2">
+                                <span>Número cromático total:</span>
+                            </div> */}
 
-                        <div className="flex gap-2">
-                            <span>Coloração:</span>
-                        </div>
+                            <div className="flex flex-col gap-2">
+                                <span>Coloração:</span>
+                                <div className="flex flex-col gap-2">
+                                    {[...coloring].map(([color, elements]) => (
+                                        <div key={color} className="flex gap-2 pl-4">
+                                            <span>{`${color} --> `}</span>
 
-                        <div className="flex gap-2">
-                            <span>Cores utilizadas:</span>
-                            <span>
-                                {colorsList.map((color, index) => (
-                                    <span key={color} className="pr-1">
-                                        {index != 0 && '/ '}
-                                        {color}
-                                    </span>
-                                ))}
-                            </span>
-                        </div>
-
-                        <div className="flex gap-2">
-                            <span>Situação:</span>
-                            <span>
-                                {colorsList.length > 0 && `${colorsList.length}-coloração-total`}
-                            </span>
-                        </div>
-                    </div>
-                </CollapsibleContent>
-            </Collapsible>
+                                            {elements.map((element) => (
+                                                <span key={element}>
+                                                    {element.length > 1 ?
+                                                            `v${element[0]}v${element[1]}`:
+                                                            `v${element}`
+                                                    }
+                                                </span>
+                                            ))}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </motion.section>
+            }
         </>
     );
 }

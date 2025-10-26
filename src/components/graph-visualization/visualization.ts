@@ -95,7 +95,10 @@ const generateElements = (matrix: number[][]): ElementsDefinition => {
     return elements;
 };
 
-const assignColorNumber = (event: EventObject, updateColor: (previousColor: string, currentColor: string) => void): void => {
+const assignColorNumber = (
+    event: EventObject,
+    updateColor: (elementId: string, previousColor: string, currentColor: string) => void
+) => {
     const element: SingularElementArgument = event.target;
     let isFirstKeyPress = true;
     const previousColor = element.data('colorNumber');
@@ -137,7 +140,8 @@ const assignColorNumber = (event: EventObject, updateColor: (previousColor: stri
     
     element.on('unselect', () => {
         const currentColor = element.data('colorNumber');
-        updateColor(previousColor, currentColor);
+        const elementId = element.data('id').replaceAll('v', '');
+        updateColor(elementId, previousColor, currentColor);
 
         window.removeEventListener('keydown', keydownHandler);
         window.removeEventListener('keypress', keypressHandler);
