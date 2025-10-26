@@ -60,6 +60,7 @@ export default function ClassesSettings() {
                         type="number"
                         id="order"
                         name="order"
+                        min={1}
                         value={order}
                         onChange={(e) => {
                             setOrder(Number(e.target.value))

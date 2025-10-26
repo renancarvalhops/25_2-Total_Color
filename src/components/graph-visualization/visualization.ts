@@ -10,6 +10,12 @@ const generateVisualization = (graph: Graph, containerRef: RefObject<HTMLElement
             elements: generateElements(graph.matrix),
             style: [
                 {
+                    selector: '*',
+                    style: {
+                        'transition-duration': 1
+                    }
+                },
+                {
                     selector: 'node',
                     style: {
                         'background-color': '#526D82',
@@ -44,6 +50,14 @@ const generateVisualization = (graph: Graph, containerRef: RefObject<HTMLElement
                         'background-color': '#48B3AF',
                         'color': '#EEE',
                         'line-color': '#48B3AF',
+                    }
+                },
+                {
+                    selector: '.highlated',
+                    style: {
+                        'background-color': '#FAA533',
+                        'color': '#F3F2EC',
+                        'line-color': '#FAA533'
                     }
                 }
             ],
@@ -95,10 +109,7 @@ const generateElements = (matrix: number[][]): ElementsDefinition => {
     return elements;
 };
 
-const assignColorNumber = (
-    event: EventObject,
-    updateColor: (elementId: string, previousColor: string, currentColor: string) => void
-) => {
+const assignColorNumber = (event: EventObject, updateColor: (elementId: string, previousColor: string, currentColor: string) => void) => {
     const element: SingularElementArgument = event.target;
     let isFirstKeyPress = true;
     const previousColor = element.data('colorNumber');
@@ -140,7 +151,8 @@ const assignColorNumber = (
     
     element.on('unselect', () => {
         const currentColor = element.data('colorNumber');
-        const elementId = element.data('id').replaceAll('v', '');
+        const elementId = element.data('id');
+
         updateColor(elementId, previousColor, currentColor);
 
         window.removeEventListener('keydown', keydownHandler);
@@ -160,6 +172,37 @@ const showColoringValidation = (element: SingularElementArgument) => {
     });
 };
 
-// const showColoring = 
+const convertToElementId = (elementLabel: string): string => {
+    const elementId = elementLabel.length > 1 ?
+        `v${Number(elementLabel[0]) + 1}v${Number(elementLabel[1]) + 1}` :
+        `v${Number(elementLabel) + 1}`;
+    
+    return elementId;
+}
 
-export { generateVisualization, assignColorNumber }
+const showColoring = (cy: Core, graph: Graph, updateColor: (elementId: string, previousColor: string, currentColor: string) => void) => {
+    let counter = 1;
+
+    graph.totalColoring?.forEach((elementsLabels, color) => {
+        elementsLabels.forEach((elementLabel) => {
+            setTimeout(() => {
+                const element = cy.$id(convertToElementId(elementLabel));
+                const colorNumber = String(color + 1);
+
+                element.data('colorNumber', colorNumber);
+                element.style('label', element.data('colorNumber'));
+                element.addClass('highlated');
+
+                setTimeout(() => {
+                    element.removeClass('highlated');
+                }, 1000);
+
+                updateColor(element.data('id'), '', colorNumber);
+            }, 1500 * counter);
+
+            counter++;
+        });
+    });
+}
+
+export { generateVisualization, assignColorNumber, showColoring }

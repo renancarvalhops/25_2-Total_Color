@@ -15,8 +15,7 @@ export function GraphProvider({
 
     const updateGraph = (newValues: GraphValues) => {
         setGraph((prev) => ({
-            ...prev,
-            layout: '',
+            layout: 'grid',
             ...newValues,
             renderings: prev.renderings + 1
         }));

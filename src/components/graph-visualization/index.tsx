@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { WritingText } from "../ui/shadcn-io/writing-text";
-import { assignColorNumber, generateVisualization } from "./visualization";
+import { assignColorNumber, generateVisualization, showColoring } from "./visualization";
 import { useGraph } from "@/contexts/GraphContext";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
@@ -45,6 +45,10 @@ export default function GraphVisualization() {
         if (cy) {
             setColoring(new Map());
             cy.elements().on('select', (e) => assignColorNumber(e, updateColor));
+
+            if (graph.class) {
+                showColoring(cy, graph, updateColor);
+            }
         }
     }, [graph.renderings]);
     
@@ -94,24 +98,42 @@ export default function GraphVisualization() {
                         </CardHeader>
 
                         <CardContent className="flex flex-col gap-2">
-                            {/* <div className="flex gap-2">
-                                <span>Número cromático total:</span>
-                            </div> */}
+                            {
+                                (graph.class && graph.totalColoring) &&    
+                                <div className="flex gap-2">
+                                    <span>Número cromático total:</span>
+                                    <motion.span
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 1 }}
+                                    >
+                                        {graph.totalColoring.length}
+                                    </motion.span>
+                                </div>
+                            }
 
                             <div className="flex flex-col gap-2">
                                 <span>Coloração:</span>
                                 <div className="flex flex-col gap-2">
-                                    {[...coloring].map(([color, elements]) => (
+                                    {[...coloring].map(([color, elementsIds]) => (
                                         <div key={color} className="flex gap-2 pl-4">
-                                            <span>{`${color} --> `}</span>
+                                            <motion.span
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                transition={{ duration: 1 }}
+                                            >
+                                                {`${color} --> `}
+                                            </motion.span>
 
-                                            {elements.map((element) => (
-                                                <span key={element}>
-                                                    {element.length > 1 ?
-                                                            `v${element[0]}v${element[1]}`:
-                                                            `v${element}`
-                                                    }
-                                                </span>
+                                            {elementsIds.map((elementId) => (
+                                                <motion.span
+                                                    key={elementId}
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    transition={{ duration: 1 }}
+                                                >
+                                                    {elementId}
+                                                </motion.span>
                                             ))}
                                         </div>
                                     ))}

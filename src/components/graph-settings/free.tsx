@@ -47,7 +47,7 @@ export default function FreeSettings() {
             updateGraph({
                 file: graphFile,
                 matrix,
-                layout
+                layout: layout ?? 'grid'
             });
         }
     };
