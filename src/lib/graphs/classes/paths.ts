@@ -11,30 +11,14 @@ const getPathGraphMatrix = (order: number): number[][] => {
 const getPathGraphTotalColoring = (order: number): string[][] => {
     const totalChromaticNumber = order > 1 ? 3 : 1;
     const coloring = Array.from({ length: totalChromaticNumber }, () => Array<string>());
-    let lastEdgeColor: number | undefined;
 
-    for (let i = 0; i < order - 1; i++) {
-        switch (i % 3) {
-            case 0:
-                coloring[0].push(`${i}`);
-                coloring[1].push(`${i}${i + 1}`);
-                lastEdgeColor = 1;
-                break;
-            case 1:
-                coloring[2].push(`${i}`);
-                coloring[0].push(`${i}${i + 1}`);
-                lastEdgeColor = 0;
-                break;
-            case 2:
-                coloring[1].push(`${i}`);
-                coloring[2].push(`${i}${i + 1}`);
-                lastEdgeColor = 2;
-                break;
+    for (let i = 0; i < 2 * order - 1; i++) {
+        if (i % 2 === 0) {
+            coloring[i % 3].push(`${i / 2}`);
+        } else {
+            coloring[i % 3].push(`${(i - 1) / 2}${(i + 1) / 2}`);
         }
     }
-
-    const lastVertexColor = typeof lastEdgeColor === 'undefined' ? 0 : (lastEdgeColor + 1) % 3;
-    coloring[lastVertexColor].push(`${order - 1}`);
 
     return coloring;
 };
