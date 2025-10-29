@@ -10,35 +10,22 @@ const getCycleGraphMatrix = (order: number): number[][] => {
     return matrix;
 };
 
-// const getCycleGraphTotalColoring = (order: number): string[][] => {
-//     const totalChromaticNumber = order > 1 ? 3 : 1;
-//     const coloring = Array.from({ length: totalChromaticNumber }, () => Array<string>());
-//     let lastEdgeColor: number | undefined;
+const getCycleGraphTotalColoring = (order: number): string[][] => {
+    const totalChromaticNumber = order % 3 === 0 ? 3 : 4;
+    const coloring = Array.from({ length: totalChromaticNumber }, () => Array<string>());
 
-//     for (let i = 0; i < order - 1; i++) {
-//         switch (i % 3) {
-//             case 0:
-//                 coloring[0].push(`${i}`);
-//                 coloring[1].push(`${i}${i + 1}`);
-//                 lastEdgeColor = 1;
-//                 break;
-//             case 1:
-//                 coloring[2].push(`${i}`);
-//                 coloring[0].push(`${i}${i + 1}`);
-//                 lastEdgeColor = 0;
-//                 break;
-//             case 2:
-//                 coloring[1].push(`${i}`);
-//                 coloring[2].push(`${i}${i + 1}`);
-//                 lastEdgeColor = 2;
-//                 break;
-//         }
-//     }
+    let i = 0;
+    for (; i < 2 * order - 1; i++) {
+        if (i % 2 === 0) {
+            coloring[i % totalChromaticNumber].push(`${i / 2}`);
+        } else {
+            coloring[i % totalChromaticNumber].push(`${(i - 1) / 2}${(i + 1) / 2}`);
+        }
+    }
 
-//     const lastVertexColor = typeof lastEdgeColor === 'undefined' ? 0 : (lastEdgeColor + 1) % 3;
-//     coloring[lastVertexColor].push(`${order - 1}`);
+    coloring[i % totalChromaticNumber].push(`0${(i - 1) / 2}`);
 
-//     return coloring;
-// };
+    return coloring;
+};
 
-export { getCycleGraphMatrix }
+export { getCycleGraphMatrix, getCycleGraphTotalColoring }

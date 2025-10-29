@@ -7,6 +7,7 @@ import {
     getCompleteGraphMatrix,
     getCompleteGraphTotalColoring,
     getCycleGraphMatrix,
+    getCycleGraphTotalColoring,
     getPathGraphMatrix,
     getPathGraphTotalColoring
 } from "@/lib/graphs";
@@ -42,9 +43,11 @@ export default function ClassesSettings() {
             });
         } else if (graphClass === 'cycles') {
             const matrix = getCycleGraphMatrix(order);
+            const totalColoring = getCycleGraphTotalColoring(order);
 
             updateGraph({
                 matrix,
+                totalColoring,
                 layout: 'circle',
                 class: graphClass
             });
