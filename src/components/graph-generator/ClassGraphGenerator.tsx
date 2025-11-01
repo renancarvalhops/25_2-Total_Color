@@ -72,7 +72,7 @@ export default function ClassGraphGenerator() {
         >
             <section className="flex flex-col gap-4">
                 <h2 className="border-b-2 border-b-gray-500 font-bold">
-                    Selecione a classe
+                    Selecione uma classe
                 </h2>
 
                 <div className="flex gap-4">
