@@ -94,7 +94,7 @@ export default function FreeSettings() {
 
                     <div className="flex gap-4">
                         <Select value={layout} onValueChange={setLayout}>
-                            <SelectTrigger className="w-[180px]">
+                            <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Selecione um layout" />
                             </SelectTrigger>
                             <SelectContent>

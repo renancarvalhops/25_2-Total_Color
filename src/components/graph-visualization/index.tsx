@@ -56,7 +56,7 @@ export default function GraphVisualization() {
     
     return (
         <motion.section
-            className="bg-gray-200 flex flex-col grow items-center justify-center"
+            className="bg-background flex flex-col grow items-center justify-center"
         >
 
             <div ref={cyContainerRef} className={`h-full w-full ${!graph.matrix && 'hidden'}`}></div>
@@ -72,9 +72,9 @@ export default function GraphVisualization() {
                         spacing=".5rem"
                         transition={{
                             type: "spring",
-                            bounce: 0.5,
+                            bounce: 0.6,
                             duration: 2,
-                            delay: .5
+                            delay: .3
                         }}
                     />
                 </motion.div>
@@ -83,7 +83,7 @@ export default function GraphVisualization() {
                     className="flex flex-col gap-5"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 2, delay: 3 }}
+                    transition={{ duration: 2, delay: 2 }}
                 >
                     <Button>Iniciar com uma classe</Button>
                     <Button>Iniciar no modo livre</Button>
