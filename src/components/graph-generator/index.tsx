@@ -24,9 +24,15 @@ const tabs = [
     }
 ];
 
+interface GraphGeneratorProps {
+    children: ReactNode,
+    tabDefaultValue?: string
+}
+
 export default function GraphGenerator({
-    children
-}: { children: ReactNode }) {
+    children,
+    tabDefaultValue = tabs[0].value
+}: GraphGeneratorProps) {
 
     return (
         <Dialog>
@@ -39,7 +45,7 @@ export default function GraphGenerator({
                     <DialogTitle></DialogTitle>
                 </DialogHeader>
 
-                <Tabs defaultValue={tabs[0].value}>
+                <Tabs defaultValue={tabDefaultValue}>
                     <TabsList className="grid w-full grid-cols-2">
                         {tabs.map((tab) => (
                             <TabsTrigger key={tab.value} value={tab.value}>

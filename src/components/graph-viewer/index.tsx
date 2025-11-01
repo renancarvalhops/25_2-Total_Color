@@ -5,6 +5,7 @@ import { assignColorNumber, generateVisualization, showColoring } from "./visual
 import { useGraph } from "@/contexts/GraphContext";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
+import GraphGenerator from "../graph-generator";
 
 export default function GraphVisualization() {
     const { graph } = useGraph();
@@ -85,8 +86,13 @@ export default function GraphVisualization() {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 2, delay: 2 }}
                 >
-                    <Button>Iniciar com uma classe</Button>
-                    <Button>Iniciar no modo livre</Button>
+                    <GraphGenerator tabDefaultValue="classes">
+                        <Button>Iniciar com uma classe</Button>
+                    </GraphGenerator>
+
+                    <GraphGenerator tabDefaultValue="free">
+                        <Button>Iniciar no modo livre</Button>
+                    </GraphGenerator>
                 </motion.div>
 
             </motion.div>
