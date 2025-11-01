@@ -1,5 +1,5 @@
 "use client"
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from "../ui/shadcn-io/tabs";
 import ClassGraphGenerator from "./ClassGraphGenerator";
@@ -11,19 +11,6 @@ export const layouts = [
     { value: 'circle', label: 'Circular' }
 ];
 
-const tabs = [
-    {
-        value: 'classes',
-        name: 'Classes',
-        content: <ClassGraphGenerator />
-    },
-    {
-        value: 'free',
-        name: 'Livre',
-        content: <FreeGraphGenerator />
-    }
-];
-
 interface GraphGeneratorProps {
     children: ReactNode,
     tabDefaultValue?: string
@@ -31,11 +18,27 @@ interface GraphGeneratorProps {
 
 export default function GraphGenerator({
     children,
-    tabDefaultValue = tabs[0].value
+    tabDefaultValue
 }: GraphGeneratorProps) {
+    const [open, setOpen] = useState(false);
+
+    const closeDialog = () => setOpen(false);
+
+    const tabs = [
+        {
+            value: 'classes',
+            name: 'Classes',
+            content: <ClassGraphGenerator closeDialog={closeDialog} />
+        },
+        {
+            value: 'free',
+            name: 'Livre',
+            content: <FreeGraphGenerator closeDialog={closeDialog} />
+        }
+    ];
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
@@ -45,7 +48,7 @@ export default function GraphGenerator({
                     <DialogTitle></DialogTitle>
                 </DialogHeader>
 
-                <Tabs defaultValue={tabDefaultValue}>
+                <Tabs defaultValue={tabDefaultValue || tabs[0].value}>
                     <TabsList className="grid w-full grid-cols-2">
                         {tabs.map((tab) => (
                             <TabsTrigger key={tab.value} value={tab.value}>

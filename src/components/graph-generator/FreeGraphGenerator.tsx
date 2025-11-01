@@ -8,7 +8,13 @@ import { getGraphMatrix, matrixToGraph6 } from "@/lib/graphs";
 import { Download } from "lucide-react";
 import { layouts } from ".";
 
-export default function FreeGraphGenerator() {
+interface FreeGraphGeneratorProps {
+    closeDialog: () => void
+}
+
+export default function FreeGraphGenerator({
+    closeDialog
+}: FreeGraphGeneratorProps) {
     const { updateGraph } = useGraph();
     const [files, setFiles] = useState<File[]>();
     const [graphFile, setGraphFile] = useState<GraphFile>();
@@ -57,6 +63,8 @@ export default function FreeGraphGenerator() {
                 layout
             });
         }
+
+        closeDialog();
     };
 
     return (

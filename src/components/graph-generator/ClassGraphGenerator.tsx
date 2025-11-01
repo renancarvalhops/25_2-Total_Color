@@ -16,7 +16,13 @@ import { useGraph } from "@/contexts/GraphContext";
 import { Download } from "lucide-react";
 import { layouts } from ".";
 
-export default function ClassGraphGenerator() {
+interface ClassGraphGeneratorProps {
+    closeDialog: () => void
+}
+
+export default function ClassGraphGenerator({
+    closeDialog
+}: ClassGraphGeneratorProps) {
     const { updateGraph } = useGraph();
     const [graphClass, setGraphClass] = useState('');
     const [order, setOrder] = useState(3);
@@ -63,6 +69,8 @@ export default function ClassGraphGenerator() {
                 class: graphClass
             });
         }
+
+        closeDialog();
     };
 
     return (
