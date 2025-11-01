@@ -20,7 +20,7 @@ const generateVisualization = (graph: Graph, containerRef: RefObject<HTMLElement
                     style: {
                         'background-color': '#526D82',
                         'color': '#FFF',
-                        'font-size': '16px',
+                        'font-size': '22px',
                         'font-weight': 'lighter',
                         'height': '50px',
                         'label': 'data(id)',
@@ -32,7 +32,7 @@ const generateVisualization = (graph: Graph, containerRef: RefObject<HTMLElement
                     selector: 'edge',
                     style: {
                         'color': '#FFF',
-                        'font-size': '16px',
+                        'font-size': '22px',
                         'line-color': '#526D82',
                         'width': 5
                     }
@@ -180,6 +180,18 @@ const convertToElementId = (elementLabel: string): string => {
     return elementId;
 }
 
+const colors = [
+    '#eb3b5a',
+    '#3867d6',
+    '#fa8231',
+    '#20bf6b',
+    '#8854d0',
+    '#f7b731',
+    '#a5b1c2',
+    '#4c3a2c',
+    '#000000'
+];
+
 const showColoring = (
     cy: Core,
     totalColoring: string[][],
@@ -197,11 +209,13 @@ const showColoring = (
     
                     element.data('colorNumber', colorNumber);
                     element.style('label', element.data('colorNumber'));
-                    element.addClass('highlated');
+                    element.style('background-color', colors[color % colors.length]);
+                    element.style('line-color', colors[color % colors.length]);
+                    //element.addClass('highlated');
     
-                    setTimeout(() => {
-                        element.removeClass('highlated');
-                    }, 1000);
+                    // setTimeout(() => {
+                    //     element.removeClass('highlated');
+                    // }, 1000);
     
                     updateColor(element.data('id'), '', colorNumber);
                 }, 1500 * counter);
@@ -226,11 +240,13 @@ const showColoring = (
         
                         element.data('colorNumber', colorNumber);
                         element.style('label', element.data('colorNumber'));
-                        element.addClass('highlated');
+                        element.style('background-color', colors[colorIndex % colors.length]);
+                        element.style('line-color', colors[colorIndex % colors.length]);
+                        // element.addClass('highlated');
         
-                        setTimeout(() => {
-                            element.removeClass('highlated');
-                        }, 1000);
+                        // setTimeout(() => {
+                        //     element.removeClass('highlated');
+                        // }, 1000);
         
                         updateColor(element.data('id'), '', colorNumber);
                     }, 1500 * counter);
