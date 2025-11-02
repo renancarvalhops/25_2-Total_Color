@@ -7,7 +7,7 @@ import { useGraph } from "@/contexts/GraphContext";
 import { Button } from "../ui/button";
 import GraphGenerator from "../graph-generator";
 
-export default function GraphVisualization() {
+export default function GraphViewer() {
     const { graph } = useGraph();
     const cyContainerRef = useRef<HTMLDivElement | null>(null);
     const [coloring, setColoring] = useState<Map<string, string[]>>(new Map());
