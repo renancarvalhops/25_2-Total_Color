@@ -206,7 +206,7 @@ const showColoring = (
     updateColor: (elementId: string, previousColor: string, currentColor: string) => void,
     orientation: "color" | "index"
 ) => {
-    let counter = 1;
+    let counter = 0;
 
     if (orientation === 'color') {
         totalColoring?.forEach((elementsLabels, color) => {
