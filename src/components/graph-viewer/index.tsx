@@ -6,12 +6,14 @@ import { useGraph } from "@/contexts/GraphContext";
 // import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import GraphGenerator from "../graph-generator";
+import { Core } from "cytoscape";
 
 export default function GraphViewer() {
     const { graph } = useGraph();
     const cyContainerRef = useRef<HTMLDivElement | null>(null);
     const [coloring, setColoring] = useState<Map<string, string[]>>(new Map());
     const colors = Array.from(coloring.keys());
+    const [cytoscape, setCytoscape] = useState<Core>();
 
     const updateColor = (elementId: string, previousColor: string, currentColor: string) => {
         setColoring((prev) => {
@@ -42,18 +44,21 @@ export default function GraphViewer() {
     }
 
     useEffect(() => {
-        const cy = generateVisualization(graph, cyContainerRef);
+        const cytoscapeInstance = generateVisualization(graph, cyContainerRef);
 
-        if (cy) {
+        if (cytoscapeInstance) {
+            cytoscapeInstance.elements().on('select', (e) => assignColorNumber(e, updateColor));
             setColoring(new Map());
-            cy.elements().on('select', (e) => assignColorNumber(e, updateColor));
-
-            if (graph.totalColoring) {
-                const orientation = graph.class !== 'completes' ? 'index' : 'color';
-                showColoring(cy, graph.totalColoring, updateColor, orientation);
-            }
+            setCytoscape(cytoscapeInstance);
         }
     }, [graph.renderings]);
+
+    useEffect(() => {
+        if (graph.showColoring && graph.totalColoring && cytoscape) {
+            const orientation = graph.class !== 'completes' ? 'index' : 'color';
+            showColoring(cytoscape, graph.totalColoring, updateColor, orientation);
+        }
+    }, [graph.showColoring]);
     
     return (
         <motion.section

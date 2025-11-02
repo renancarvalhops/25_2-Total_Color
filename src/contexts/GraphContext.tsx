@@ -3,6 +3,7 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 type GraphContextType = {
     graph: Graph,
+    generateGraph: (newValues: GraphValues) => void,
     updateGraph: (newValues: GraphValues) => void
 }
 
@@ -13,16 +14,22 @@ export function GraphProvider({
 }: { children: ReactNode }) {
     const [graph, setGraph] = useState<Graph>({ renderings: 0 });
 
-    const updateGraph = (newValues: GraphValues) => {
+    const generateGraph = (newValues: GraphValues) => {
         setGraph((prev) => ({
-            layout: 'grid',
             ...newValues,
             renderings: prev.renderings + 1
         }));
     };
 
+    const updateGraph = (newValues: GraphValues) => {
+        setGraph((prev) => ({
+            ...prev,
+            ...newValues
+        }));
+    };
+
     return (
-        <GraphContext.Provider value={{ graph, updateGraph }}>
+        <GraphContext.Provider value={{ graph, generateGraph, updateGraph }}>
             {children}
         </GraphContext.Provider>
     );

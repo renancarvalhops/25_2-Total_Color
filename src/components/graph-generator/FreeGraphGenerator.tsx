@@ -14,14 +14,14 @@ interface FreeGraphGeneratorProps {
 export default function FreeGraphGenerator({
     closeDialog
 }: FreeGraphGeneratorProps) {
-    const { updateGraph } = useGraph();
+    const { generateGraph } = useGraph();
     const [files, setFiles] = useState<File[]>();
     const [graphFile, setGraphFile] = useState<GraphFile>();
     const [layout, setLayout] = useState<string>();
 
     const handleDrop = (newFiles: File[]) => {
         setFiles(newFiles);
-        
+
         const reader = new FileReader();
 
         reader.onload = () => {
@@ -52,8 +52,8 @@ export default function FreeGraphGenerator({
 
         if (graphFile) {
             const matrix = getGraphMatrix(graphFile);
-    
-            updateGraph({
+
+            generateGraph({
                 file: graphFile,
                 matrix,
                 layout,

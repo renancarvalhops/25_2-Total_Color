@@ -1,4 +1,4 @@
-import { DownloadIcon, LoaderCircleIcon, PlusIcon, PyramidIcon } from "lucide-react";
+import { DownloadIcon, LoaderCircleIcon, PaletteIcon, PlusIcon, PyramidIcon } from "lucide-react";
 import { motion } from "motion/react";
 import GraphGenerator from "../graph-generator";
 import { useGraph } from "@/contexts/GraphContext";
@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { matrixToGraph6 } from "@/lib/graphs";
 
 export default function FabBar() {
-    const { graph } = useGraph();
+    const { graph, updateGraph } = useGraph();
     const [graph6File, setGraph6File] = useState<Blob>();
 
     useEffect(() => {
@@ -25,17 +25,30 @@ export default function FabBar() {
         >
             {
                 graph.matrix ?
-                    <div className="border border-gray-200 bg-white cursor-pointer flex gap-2 hover:opacity-60 p-2 rounded duration-300 w-auto">
-                        <div className="flex">
-                            {graph6File ? <DownloadIcon /> : <LoaderCircleIcon className="animate-spin" />}
+                    <>
+                        <div className="border border-gray-200 bg-white cursor-pointer flex gap-2 hover:opacity-60 p-2 rounded duration-300 w-auto">
+                            <div className="flex">
+                                {graph6File ? <DownloadIcon /> : <LoaderCircleIcon className="animate-spin" />}
+                            </div>
+                            <a
+                                download={`${graph.fileName}.g6`}
+                                href={graph6File ? URL.createObjectURL(graph6File) : ''}
+                            >
+                                Baixar em graph6
+                            </a>
                         </div>
-                        <a
-                            download={`${graph.fileName}.g6`}
-                            href={graph6File ? URL.createObjectURL(graph6File) : ''}
+
+                        <div
+                            className="border border-gray-200 bg-white cursor-pointer flex gap-2 hover:opacity-60 p-2 rounded duration-300 w-auto"
+                            onClick={() => updateGraph({ showColoring: true })}
                         >
-                            Baixar em graph6
-                        </a>
-                    </div>
+                            <div className="flex">
+                                <PaletteIcon />
+                            </div>
+
+                            Apresentar Coloração
+                        </div>
+                    </>
                     :
                     <div></div>
             }
@@ -44,7 +57,7 @@ export default function FabBar() {
                 <div className="border border-gray-200 bg-white cursor-pointer flex gap-2 hover:opacity-60 p-2 rounded duration-300 w-auto">
                     <div className="flex">
                         <PyramidIcon />
-                        <PlusIcon size={15}/>
+                        <PlusIcon size={15} />
                     </div>
 
                     Criar grafo

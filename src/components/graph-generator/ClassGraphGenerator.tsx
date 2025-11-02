@@ -21,7 +21,7 @@ interface ClassGraphGeneratorProps {
 export default function ClassGraphGenerator({
     closeDialog
 }: ClassGraphGeneratorProps) {
-    const { updateGraph } = useGraph();
+    const { generateGraph } = useGraph();
     const [graphClass, setGraphClass] = useState('');
     const [order, setOrder] = useState(3);
     const [layout, setLayout] = useState<string>();
@@ -33,9 +33,10 @@ export default function ClassGraphGenerator({
             const matrix = getCompleteGraphMatrix(order);
             const totalColoring = getCompleteGraphTotalColoring(order);
 
-            updateGraph({
+            generateGraph({
                 matrix,
                 totalColoring,
+                showColoring: false,
                 layout,
                 class: graphClass,
                 fileName: `${graphClass}-${order}`
@@ -44,9 +45,10 @@ export default function ClassGraphGenerator({
             const matrix = getPathGraphMatrix(order);
             const totalColoring = getPathGraphTotalColoring(order);
 
-            updateGraph({
+            generateGraph({
                 matrix,
                 totalColoring,
+                showColoring: false,
                 layout,
                 class: graphClass,
                 fileName: `${graphClass}-${order}`
@@ -55,9 +57,10 @@ export default function ClassGraphGenerator({
             const matrix = getCycleGraphMatrix(order);
             const totalColoring = getCycleGraphTotalColoring(order);
 
-            updateGraph({
+            generateGraph({
                 matrix,
                 totalColoring,
+                showColoring: false,
                 layout,
                 class: graphClass,
                 fileName: `${graphClass}-${order}`
@@ -87,7 +90,7 @@ export default function ClassGraphGenerator({
                     >
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecione uma classe" />
-                        </SelectTrigger>                    
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="completes">Completos</SelectItem>
                             <SelectItem value="paths">Caminhos</SelectItem>
@@ -136,7 +139,7 @@ export default function ClassGraphGenerator({
                         </SelectContent>
                     </Select>
                 </div>
-            </section>            
+            </section>
 
             <Button disabled={!graphClass}>Gerar Grafo</Button>
         </form>
