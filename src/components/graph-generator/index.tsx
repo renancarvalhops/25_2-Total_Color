@@ -60,7 +60,7 @@ export default function GraphGenerator({
 
                     <TabsContents>
                         {tabs.map((tab) => (
-                            <TabsContent key={tab.value} value={tab.value} className="">
+                            <TabsContent key={tab.value} value={tab.value}>
                                 {tab.content}
                             </TabsContent>
                         ))}
