@@ -25,7 +25,7 @@ const getCompleteGraphTotalColoring = (order: number): string[][] => {
                 const leftIndex = mod(i - j, order);
                 const rightIndex = mod(i + j, order);
 
-                coloring[i].push(`${Math.min(leftIndex, rightIndex)}${Math.max(leftIndex, rightIndex)}`);
+                coloring[i].push(`${Math.min(leftIndex, rightIndex)}_${Math.max(leftIndex, rightIndex)}`);
             }
         }
     } else {
@@ -39,7 +39,7 @@ const getCompleteGraphTotalColoring = (order: number): string[][] => {
                 const rightIndex = mod(i + j, order + 1);
 
                 if (leftIndex !== 0 && rightIndex !== 0) {
-                    coloring[i].push(`${Math.min(leftIndex, rightIndex) - 1}${Math.max(leftIndex, rightIndex) - 1}`);
+                    coloring[i].push(`${Math.min(leftIndex, rightIndex) - 1}_${Math.max(leftIndex, rightIndex) - 1}`);
                 }
 
             }

@@ -181,9 +181,11 @@ const showColoringValidation = (element: SingularElementArgument) => {
 };
 
 const convertToElementId = (elementLabel: string): string => {
-    const elementId = elementLabel.length > 1 ?
-        `v${Number(elementLabel[0]) + 1}v${Number(elementLabel[1]) + 1}` :
-        `v${Number(elementLabel) + 1}`;
+    const labelParts = elementLabel.split('_');
+
+    const elementId = labelParts.length === 2 ?
+        `v${Number(labelParts[0]) + 1}v${Number(labelParts[1]) + 1}` :
+        `v${Number(labelParts[0]) + 1}`;
     
     return elementId;
 };

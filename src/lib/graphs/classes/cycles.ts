@@ -19,11 +19,11 @@ const getCycleGraphTotalColoring = (order: number): string[][] => {
         if (i % 2 === 0) {
             coloring[i % totalChromaticNumber].push(`${i / 2}`);
         } else {
-            coloring[i % totalChromaticNumber].push(`${(i - 1) / 2}${(i + 1) / 2}`);
+            coloring[i % totalChromaticNumber].push(`${(i - 1) / 2}_${(i + 1) / 2}`);
         }
     }
 
-    coloring[i % totalChromaticNumber].push(`0${(i - 1) / 2}`);
+    coloring[i % totalChromaticNumber].push(`0_${(i - 1) / 2}`);
 
     return coloring;
 };

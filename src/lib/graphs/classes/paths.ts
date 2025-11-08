@@ -16,7 +16,7 @@ const getPathGraphTotalColoring = (order: number): string[][] => {
         if (i % 2 === 0) {
             coloring[i % 3].push(`${i / 2}`);
         } else {
-            coloring[i % 3].push(`${(i - 1) / 2}${(i + 1) / 2}`);
+            coloring[i % 3].push(`${(i - 1) / 2}_${(i + 1) / 2}`);
         }
     }
 
