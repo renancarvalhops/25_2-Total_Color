@@ -24,7 +24,7 @@ export default function ClassGraphGenerator({
     const { generateGraph } = useGraph();
     const [graphClass, setGraphClass] = useState('');
     const [order, setOrder] = useState(3);
-    const [layout, setLayout] = useState<string>();
+    const [layout, setLayout] = useState('');
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();

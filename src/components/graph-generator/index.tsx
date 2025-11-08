@@ -1,6 +1,6 @@
 "use client"
 import { ReactNode, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from "../ui/shadcn-io/tabs";
 import ClassGraphGenerator from "./ClassGraphGenerator";
 import FreeGraphGenerator from "./FreeGraphGenerator";
@@ -46,6 +46,7 @@ export default function GraphGenerator({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle></DialogTitle>
+                    <DialogDescription></DialogDescription>
                 </DialogHeader>
 
                 <Tabs defaultValue={tabDefaultValue || tabs[0].value}>
