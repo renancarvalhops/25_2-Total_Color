@@ -4,7 +4,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 export default function AppBar() {
     return (
         <menu className="bg-gray-100 flex items-center justify-between px-12 py-2 relative rounded-b-lg shadow-lg">
-            <h2 className="font-bold text-lg select-none">Total-Color</h2>
+
+            <h2 className="font-bold text-lg select-none">
+                Total-Color
+            </h2>
+            
             <span></span>
             
             <Dialog>
