@@ -161,6 +161,11 @@ const assignColorNumber = (event: EventObject, updateColor: (elementId: string, 
         const currentColor = element.data('colorNumber');
         const elementId = element.data('id');
 
+        element.style('color', colors[(Number(currentColor) - 1) % colors.length]);
+        element.style('border-color', colors[(Number(currentColor) - 1) % colors.length]);
+        element.style('line-color', colors[(Number(currentColor) - 1) % colors.length]);
+        element.style('text-border-color', colors[(Number(currentColor) - 1) % colors.length]);
+
         updateColor(elementId, previousColor, currentColor);
 
         window.removeEventListener('keydown', keydownHandler);
