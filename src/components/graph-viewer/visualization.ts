@@ -186,7 +186,7 @@ const convertToElementId = (elementLabel: string): string => {
         `v${Number(elementLabel) + 1}`;
     
     return elementId;
-}
+};
 
 export const colors = [
     '#eb3b5a',
@@ -221,11 +221,6 @@ const showColoring = (
                     element.style('border-color', colors[color % colors.length]);
                     element.style('line-color', colors[color % colors.length]);
                     element.style('text-border-color', colors[color % colors.length]);
-                    //element.addClass('highlated');
-    
-                    // setTimeout(() => {
-                    //     element.removeClass('highlated');
-                    // }, 1000);
     
                     updateColor(element.data('id'), '', colorNumber);
                 }, 1500 * counter);
@@ -254,11 +249,6 @@ const showColoring = (
                         element.style('border-color', colors[colorIndex % colors.length]);
                         element.style('line-color', colors[colorIndex % colors.length]);
                         element.style('text-border-color', colors[colorIndex % colors.length]);
-                        // element.addClass('highlated');
-        
-                        // setTimeout(() => {
-                        //     element.removeClass('highlated');
-                        // }, 1000);
         
                         updateColor(element.data('id'), '', colorNumber);
                     }, 1500 * counter);
@@ -268,6 +258,6 @@ const showColoring = (
             }
         }
     }
-}
+};
 
 export { generateVisualization, assignColorNumber, showColoring }
