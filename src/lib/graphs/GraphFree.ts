@@ -1,5 +1,5 @@
 import { AcceptedFileExtensions } from "@/types";
-import Graph6 from "./Graph6";
+import { Graph6 } from "./Graph6";
 
 export default class GraphFree implements Graph {
     matrix: number[][];

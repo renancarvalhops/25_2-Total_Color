@@ -15,7 +15,7 @@ interface MakeArguments {
     }
 }
 
-export default class GraphFactory {
+export class GraphFactory {
     static make({ graphClass, graphFree }: MakeArguments): Graph {
         let Graph: Graph;
 

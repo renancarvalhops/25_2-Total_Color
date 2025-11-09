@@ -1,4 +1,4 @@
-export default class Graph6 {
+export class Graph6 {
     public static parse(matrix: number[][]): string {
         const n = matrix.length;
         let x = '';
