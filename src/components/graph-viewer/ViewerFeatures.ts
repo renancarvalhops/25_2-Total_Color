@@ -1,4 +1,4 @@
-import { GraphView } from "@/types";
+import { GraphView, TCEdgeDataDefinition, TCNodeDataDefinition } from "@/types";
 import cytoscape, { Collection, Core, ElementsDefinition, EventObject, SingularElementArgument } from "cytoscape";
 import { RefObject } from "react";
 import { convertToElementId, HexadecimalColors } from "./ViewerUtils";
@@ -17,24 +17,28 @@ const generateElements = (matrix: number[][]): ElementsDefinition => {
     const order = matrix.length;
 
     for (let i = 0; i < order; i++) {
+        const nodeData: TCNodeDataDefinition = {
+            id: `v${i + 1}`,
+            hasConflict: false,
+            colorNumber: ''  
+        };
+
         elements.nodes.push({
-            data: {
-                id: `v${i + 1}`,
-                hasConflict: false,
-                colorNumber: ''
-            }
+            data: nodeData
         });
 
         for (let j = i + 1; j < order; j++) {
             if (matrix[i][j]) {
+                const edgedata: TCEdgeDataDefinition = {
+                    id: `v${i + 1}v${j + 1}`,
+                    source: `v${i + 1}`,
+                    target: `v${j + 1}`,
+                    hasConflict: false,
+                    colorNumber: ''
+                };
+
                 elements.edges.push({
-                    data: {
-                        id: `v${i + 1}v${j + 1}`,
-                        source: `v${i + 1}`,
-                        target: `v${j + 1}`,
-                        hasConflict: false,
-                        colorNumber: ''
-                    }
+                    data: edgedata
                 });
             }
         }
