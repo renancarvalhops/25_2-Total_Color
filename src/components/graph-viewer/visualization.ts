@@ -1,83 +1,77 @@
 import { validateTotalColoring } from "@/lib/graphs";
-import { Graph } from "@/types";
+import { ColoringOrientation, GraphView } from "@/types";
 import cytoscape, { Core, ElementsDefinition, EventObject, SingularElementArgument } from "cytoscape";
 import { RefObject } from "react";
 
-const generateVisualization = (graph: Graph, containerRef: RefObject<HTMLDivElement | null>): Core | null => {
+const generateVisualization = (graphView: GraphView, containerRef: RefObject<HTMLDivElement | null>): Core => {
     const baseColor = '#526D82';
 
-    if (graph.matrix) {
-        const cy = cytoscape({
-            container: containerRef.current,
-            elements: generateElements(graph.matrix),
-            style: [
-                {
-                    selector: '*',
-                    style: {
-                        'color': baseColor,
-                        'font-size': '16px',
-                        'transition-duration': 1
-                    }
-                },
-                {
-                    selector: 'node',
-                    style: {
-                        'background-color': '#FFF',
-                        'border-color': baseColor,
-                        'border-width': 2,
-                        'font-weight': 'lighter',
-                        'height': '40px',
-                        'label': 'data(id)',
-                        'text-valign': 'center',
-                        'width': '40px'
-                    }
-                },
-                {
-                    selector: 'edge',
-                    style: {
-                        'line-color': baseColor,
-                        'text-background-color': '#FFF',
-                        'text-background-padding': '5px',
-                        'text-background-opacity': 1,
-                        'text-border-color': baseColor,
-                        'text-border-opacity': 1,
-                        'text-border-width': 2,
-                        'width': 5
-                    }
-                },
-                {
-                    selector: '[?hasConflict]',
-                    style: {
-                        'background-color': '#DC143C',
-                        'line-color': '#DC143C',
-                    }
-                },
-                {
-                    selector: ':selected',
-                    style: {
-                        'background-color': '#48B3AF',
-                        'color': '#EEE',
-                        'line-color': '#48B3AF',
-                    }
-                },
-                {
-                    selector: '.highlated',
-                    style: {
-                        'background-color': '#FAA533',
-                        'color': '#F3F2EC',
-                        'line-color': '#FAA533'
-                    }
+    return cytoscape({
+        container: containerRef.current,
+        elements: generateElements(graphView.graph.matrix),
+        style: [
+            {
+                selector: '*',
+                style: {
+                    'color': baseColor,
+                    'font-size': '16px',
+                    'transition-duration': 1
                 }
-            ],
-            layout: {
-                name: graph.layout || 'circle',
+            },
+            {
+                selector: 'node',
+                style: {
+                    'background-color': '#FFF',
+                    'border-color': baseColor,
+                    'border-width': 2,
+                    'font-weight': 'lighter',
+                    'height': '40px',
+                    'label': 'data(id)',
+                    'text-valign': 'center',
+                    'width': '40px'
+                }
+            },
+            {
+                selector: 'edge',
+                style: {
+                    'line-color': baseColor,
+                    'text-background-color': '#FFF',
+                    'text-background-padding': '5px',
+                    'text-background-opacity': 1,
+                    'text-border-color': baseColor,
+                    'text-border-opacity': 1,
+                    'text-border-width': 2,
+                    'width': 5
+                }
+            },
+            {
+                selector: '[?hasConflict]',
+                style: {
+                    'background-color': '#DC143C',
+                    'line-color': '#DC143C',
+                }
+            },
+            {
+                selector: ':selected',
+                style: {
+                    'background-color': '#48B3AF',
+                    'color': '#EEE',
+                    'line-color': '#48B3AF',
+                }
+            },
+            {
+                selector: '.highlated',
+                style: {
+                    'background-color': '#FAA533',
+                    'color': '#F3F2EC',
+                    'line-color': '#FAA533'
+                }
             }
-        });
-    
-        return cy;
-    } else {
-        return null;
-    }
+        ],
+        layout: {
+            name: graphView.layout || 'circle',
+        }
+    });
 };
 
 const generateElements = (matrix: number[][]): ElementsDefinition => {
@@ -89,7 +83,6 @@ const generateElements = (matrix: number[][]): ElementsDefinition => {
     const order = matrix.length;
 
     for (let i = 0; i < order; i++) {
-        // generate verteces
         elements.nodes.push({
             data: {
                 id: `v${i + 1}`,
@@ -98,7 +91,6 @@ const generateElements = (matrix: number[][]): ElementsDefinition => {
             }
         });
 
-        // generate edges
         for (let j = i + 1; j < order; j++) {
             if (matrix[i][j]) {
                 elements.edges.push({
@@ -209,10 +201,13 @@ export const colors = [
 
 const showColoring = (
     cy: Core,
-    totalColoring: string[][],
-    updateColor: (elementId: string, previousColor: string, currentColor: string) => void,
-    orientation: "color" | "index"
+    graphView: GraphView,
+    updateColor: (elementId: string, previousColor: string, currentColor: string) => void
 ) => {
+    if (!graphView.coloringOptions || !graphView.graph.totalColoring) {
+        return;
+    }
+
     let counter = 0;
 
     const showColor = (color: number, elementLabel: string) => {
@@ -234,24 +229,24 @@ const showColoring = (
         counter++;
     };
 
-    if (orientation === 'color') {
-        totalColoring.forEach((elementsLabels, color) => {
+    if (graphView.coloringOptions.orientation === 'color') {
+        graphView.graph.totalColoring.forEach((elementsLabels, color) => {
             elementsLabels.forEach((elementLabel) => {
                 showColor(color, elementLabel);
             });
         });
-    } else if (orientation === 'index') {
-        const maxElementsLabels = totalColoring.reduce((prev, curr) => (
+    } else if (graphView.coloringOptions.orientation === 'index') {
+        const maxElementsLabels = graphView.graph.totalColoring.reduce((prev, curr) => (
             prev.length > curr.length ? prev : curr
         ));
 
         const maxElementIndex = maxElementsLabels.length - 1;
-        const maxColorIndex = totalColoring.length - 1;
+        const maxColorIndex = graphView.graph.totalColoring.length - 1;
 
         for (let elementIndex = 0; elementIndex <= maxElementIndex; elementIndex++) {
             for (let colorIndex = 0; colorIndex <= maxColorIndex; colorIndex++) {
-                if (elementIndex < totalColoring[colorIndex].length) {
-                    showColor(colorIndex, totalColoring[colorIndex][elementIndex]);
+                if (elementIndex < graphView.graph.totalColoring[colorIndex].length) {
+                    showColor(colorIndex, graphView.graph.totalColoring[colorIndex][elementIndex]);
                 }
             }
         }

@@ -1,26 +1,22 @@
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { WritingText } from "../ui/shadcn-io/writing-text";
 import { assignColorNumber, generateVisualization, showColoring } from "./visualization";
-import { useGraph } from "@/contexts/GraphContext";
-import { Card, CardContent } from "../ui/card";
-import { Button } from "../ui/button";
-import GraphGenerator from "../graph-generator";
+import { useGraphView } from "@/contexts/GraphViewContext";
 import { Core } from "cytoscape";
-import { colors as colorsHex } from "./visualization";
+import Welcome from "./Welcome";
+import ColoringPanel from "./ColoringPanel";
 
 export default function GraphViewer() {
-    const { graph } = useGraph();
+    const { graphView } = useGraphView();
     const cyContainerRef = useRef<HTMLDivElement | null>(null);
     const [coloring, setColoring] = useState<Map<string, string[]>>(new Map());
-    const colors = Array.from(coloring.keys());
     const [cytoscape, setCytoscape] = useState<Core>();
 
     const updateColor = (elementId: string, previousColor: string, currentColor: string) => {
         setColoring((prev) => {
             const updatedColoring = new Map(prev);
             let ids: string[] | undefined;
-    
+
             ids = updatedColoring.get(previousColor);
             if (ids) {
                 if (ids.length > 1) {
@@ -45,105 +41,36 @@ export default function GraphViewer() {
     }
 
     useEffect(() => {
-        const cytoscapeInstance = generateVisualization(graph, cyContainerRef);
-
-        if (cytoscapeInstance) {
+        if (graphView.renderings > 0) {
+            const cytoscapeInstance = generateVisualization(graphView, cyContainerRef);
+    
             cytoscapeInstance.elements().on('select', (e) => assignColorNumber(e, updateColor));
             setColoring(new Map());
             setCytoscape(cytoscapeInstance);
         }
-    }, [graph.renderings]);
+    }, [graphView.renderings]);
 
     useEffect(() => {
-        if (graph.showColoring && graph.totalColoring && cytoscape) {
-            const orientation = graph.class !== 'completes' ? 'index' : 'color';
-            showColoring(cytoscape, graph.totalColoring, updateColor, orientation);
+        if (cytoscape && graphView.graph.totalColoring) {
+            showColoring(cytoscape, graphView, updateColor);
         }
-    }, [graph.showColoring]);
-    
+    }, [graphView.coloringOptions?.show]);
+
     return (
         <motion.section
             className="bg-background flex flex-col grow items-center justify-center relative"
         >
+            {graphView.renderings < 1 ?
+                <Welcome />
+                :
+                <>
+                    <div ref={cyContainerRef} className={`h-full w-full ${graphView.renderings < 1 && 'hidden'}`}></div>
 
-            <div ref={cyContainerRef} className={`h-full w-full ${!graph.matrix && 'hidden'}`}></div>
-
-            <motion.div
-                className={`flex flex-col gap-24 ${graph.matrix && 'hidden'}`}
-            >
-                <motion.div>
-                    <WritingText
-                        text="Bem-vindo(a) ao Total-Color 😎"
-                        className="text-2xl lg:text-4xl select-none"
-                        inView={true}
-                        spacing=".5rem"
-                        transition={{
-                            type: "spring",
-                            bounce: 0.6,
-                            duration: 2,
-                            delay: .3
-                        }}
-                    />
-                </motion.div>
-
-                <motion.div
-                    className="flex flex-col gap-5"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 2, delay: 2 }}
-                >
-                    <GraphGenerator tabDefaultValue="classes">
-                        <Button>Iniciar com uma classe</Button>
-                    </GraphGenerator>
-
-                    <GraphGenerator tabDefaultValue="free">
-                        <Button>Iniciar no modo livre</Button>
-                    </GraphGenerator>
-                </motion.div>
-
-            </motion.div>
-
-            {graph.matrix &&
-                <motion.section
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <Card className="absolute left-10 max-w-sm top-10 z-10">
-                        <CardContent className="flex flex-col gap-2 text-lg">
-                            {
-                                (graph.class && graph.totalColoring) &&
-                                <div className="flex gap-2">
-                                    <span>Número cromático total:</span>
-                                    <motion.span
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ duration: 1 }}
-                                    >
-                                        {graph.totalColoring.length}
-                                    </motion.span>
-                                </div>
-                            }
-
-                            <div className="flex flex-col gap-2">
-                                <span>Cores utilizadas: {colors.length}</span>
-                                <div className="flex gap-2">
-                                    {colors.map((color) => (
-                                        <span
-                                            key={color}
-                                            style={{
-                                                color: colorsHex[(Number(color) - 1) % colorsHex.length]
-                                            }}
-                                        >
-                                            {color}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </motion.section>
+                    <ColoringPanel colors={Array.from(coloring.keys())} />
+                </>
             }
+
+
         </motion.section>
     );
 }

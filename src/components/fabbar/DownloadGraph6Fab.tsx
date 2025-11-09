@@ -1,21 +1,19 @@
-import { useGraph } from "@/contexts/GraphContext";
+import { useGraphView } from "@/contexts/GraphViewContext";
 import { matrixToGraph6 } from "@/lib/graphs";
 import { DownloadIcon, LoaderCircleIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
 export default function DownloadGraph6Fab() {
-    const { graph } = useGraph();
+    const { graphView } = useGraphView();
     const [graph6File, setGraph6File] = useState<Blob>();
 
     useEffect(() => {
-        if (graph.matrix) {
-            const blob = new Blob([matrixToGraph6(graph.matrix)]);
-            setGraph6File(blob);
-        }
-    }, [graph.renderings]);
+        const blob = new Blob([matrixToGraph6(graphView.graph.matrix)]);
+        setGraph6File(blob);
+    }, [graphView.renderings]);
 
-    if (!graph.matrix) {
+    if (graphView.renderings < 1) {
         return null;
     }
 
@@ -30,7 +28,7 @@ export default function DownloadGraph6Fab() {
                 {graph6File ? <DownloadIcon /> : <LoaderCircleIcon className="animate-spin" />}
             </div>
             <a
-                download={`${graph.fileName}.g6`}
+                download={`${graphView.name}.g6`}
                 href={graph6File ? URL.createObjectURL(graph6File) : ''}
             >
                 Baixar em graph6

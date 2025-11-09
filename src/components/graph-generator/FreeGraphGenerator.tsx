@@ -2,10 +2,16 @@ import { FormEventHandler, useState } from "react";
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "../ui/shadcn-io/dropzone";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { useGraph } from "@/contexts/GraphContext";
-import { GraphFile } from "@/types";
-import { getGraphMatrix } from "@/lib/graphs";
+import { useGraphView } from "@/contexts/GraphViewContext";
+import { AcceptedFileExtensions } from "@/types";
 import { layouts } from ".";
+import GraphFactory from "@/lib/graphs/GraphFactory";
+
+
+interface GraphFreeOptions {
+    fileExtension: AcceptedFileExtensions,
+    content: string
+}
 
 interface FreeGraphGeneratorProps {
     closeDialog: () => void
@@ -14,10 +20,10 @@ interface FreeGraphGeneratorProps {
 export default function FreeGraphGenerator({
     closeDialog
 }: FreeGraphGeneratorProps) {
-    const { generateGraph } = useGraph();
+    const { generateGraphView } = useGraphView();
     const [files, setFiles] = useState<File[]>();
-    const [graphFile, setGraphFile] = useState<GraphFile>();
-    const [layout, setLayout] = useState<string>();
+    const [graphFile, setGraphFile] = useState<GraphFreeOptions & { name: string }>();
+    const [layout, setLayout] = useState<string>('');
 
     const handleDrop = (newFiles: File[]) => {
         setFiles(newFiles);
@@ -30,15 +36,15 @@ export default function FreeGraphGenerator({
 
                 if (isG6.test(newFiles[0].name)) {
                     setGraphFile({
-                        name: newFiles[0].name.replace(/\.g6$/g, ''),
-                        type: 'g6',
-                        text: reader.result.split(/\s+/g)[0]
+                        name: newFiles[0].name.replace(/\..+$/, ''),
+                        fileExtension: 'g6',
+                        content: reader.result.split(/\s+/g)[0]
                     });
                 } else {
                     setGraphFile({
-                        name: newFiles[0].name.replace(/\.txt$/g, ''),
-                        type: 'txt',
-                        text: reader.result
+                        name: newFiles[0].name.replace(/\..+$/, ''),
+                        fileExtension: 'txt',
+                        content: reader.result
                     });
                 }
             }
@@ -51,13 +57,18 @@ export default function FreeGraphGenerator({
         e.preventDefault();
 
         if (graphFile) {
-            const matrix = getGraphMatrix(graphFile);
+            const graph = GraphFactory.make({
+                graphFreeOptions: {
+                    fileExtension: graphFile.fileExtension,
+                    content: graphFile.content
+                }
+            });
 
-            generateGraph({
-                file: graphFile,
-                matrix,
+            generateGraphView({
+                graph,
                 layout,
-                fileName: graphFile.name
+                name: graphFile.name,
+                renderings: 0
             });
         }
 
@@ -89,7 +100,7 @@ export default function FreeGraphGenerator({
                     </Dropzone>
 
                     <pre className="max-h-72 max-w-72 overflow-auto">
-                        {graphFile?.text}
+                        {graphFile?.content}
                     </pre>
                 </div>
 

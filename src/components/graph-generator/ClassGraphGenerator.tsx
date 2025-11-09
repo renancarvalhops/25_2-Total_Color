@@ -3,16 +3,10 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Input } from "../ui/input";
-import {
-    getCompleteGraphMatrix,
-    getCompleteGraphTotalColoring,
-    getCycleGraphMatrix,
-    getCycleGraphTotalColoring,
-    getPathGraphMatrix,
-    getPathGraphTotalColoring
-} from "@/lib/graphs";
-import { useGraph } from "@/contexts/GraphContext";
+import { useGraphView } from "@/contexts/GraphViewContext";
 import { layouts } from ".";
+import GraphFactory from "@/lib/graphs/GraphFactory";
+import { GraphClassesNames } from "@/types";
 
 interface ClassGraphGeneratorProps {
     closeDialog: () => void
@@ -21,49 +15,31 @@ interface ClassGraphGeneratorProps {
 export default function ClassGraphGenerator({
     closeDialog
 }: ClassGraphGeneratorProps) {
-    const { generateGraph } = useGraph();
-    const [graphClass, setGraphClass] = useState('');
+    const { generateGraphView } = useGraphView();
+    const [graphClassName, setGraphClassName] = useState<GraphClassesNames>();
     const [order, setOrder] = useState(3);
     const [layout, setLayout] = useState('');
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        if (graphClass === 'completes') {
-            const matrix = getCompleteGraphMatrix(order);
-            const totalColoring = getCompleteGraphTotalColoring(order);
-
-            generateGraph({
-                matrix,
-                totalColoring,
-                showColoring: false,
-                layout,
-                class: graphClass,
-                fileName: `${graphClass}-${order}`
+        if (graphClassName) {
+            const graph = GraphFactory.make({
+                graphClassOptions: {
+                    name: graphClassName,
+                    order: order
+                }
             });
-        } else if (graphClass === 'paths') {
-            const matrix = getPathGraphMatrix(order);
-            const totalColoring = getPathGraphTotalColoring(order);
 
-            generateGraph({
-                matrix,
-                totalColoring,
-                showColoring: false,
+            generateGraphView({
+                graph,
                 layout,
-                class: graphClass,
-                fileName: `${graphClass}-${order}`
-            });
-        } else if (graphClass === 'cycles') {
-            const matrix = getCycleGraphMatrix(order);
-            const totalColoring = getCycleGraphTotalColoring(order);
-
-            generateGraph({
-                matrix,
-                totalColoring,
-                showColoring: false,
-                layout,
-                class: graphClass,
-                fileName: `${graphClass}-${order}`
+                name: `${graphClassName}-${order}`,
+                renderings: 0,
+                coloringOptions: {
+                    orientation: graphClassName === 'completes' ? 'color' : 'index',
+                    show: false
+                }
             });
         }
 
@@ -82,9 +58,9 @@ export default function ClassGraphGenerator({
 
                 <div className="flex gap-4">
                     <Select
-                        value={graphClass}
-                        onValueChange={(value) => {
-                            setGraphClass(value);
+                        value={graphClassName}
+                        onValueChange={(value: GraphClassesNames) => {
+                            setGraphClassName(value);
                             setLayout(value === 'paths' ? 'grid' : 'circle');
                         }}
                     >
@@ -100,7 +76,7 @@ export default function ClassGraphGenerator({
                 </div>
             </section>
 
-            <section className={`${graphClass ? 'flex' : 'hidden'} flex-col gap-4`}>
+            <section className={`${graphClassName ? 'flex' : 'hidden'} flex-col gap-4`}>
                 <h2 className="border-b-2 border-b-gray-500 font-bold">
                     Configurações da classe
                 </h2>
@@ -120,7 +96,7 @@ export default function ClassGraphGenerator({
                 </div>
             </section>
 
-            <section className={`${graphClass ? 'flex flex-col gap-4' : 'hidden'}`}>
+            <section className={`${graphClassName ? 'flex flex-col gap-4' : 'hidden'}`}>
                 <h2 className="border-b-2 border-b-gray-500 font-bold">
                     Layout
                 </h2>
@@ -141,7 +117,7 @@ export default function ClassGraphGenerator({
                 </div>
             </section>
 
-            <Button disabled={!graphClass}>Gerar Grafo</Button>
+            <Button disabled={!graphClassName}>Gerar Grafo</Button>
         </form>
     );
 }
