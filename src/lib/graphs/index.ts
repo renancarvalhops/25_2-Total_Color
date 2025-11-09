@@ -1,3 +1,2 @@
-export * from './graph6';
-export * from './graphs';
+export * from './Graph6';
 export * from './GraphFactory';

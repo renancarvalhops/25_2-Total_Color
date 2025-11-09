@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Input } from "../ui/input";
-import { useGraphView } from "@/contexts/GraphViewContext";
+import { useGraph } from "@/contexts/GraphViewContext";
 import { layouts } from ".";
 import GraphFactory from "@/lib/graphs/GraphFactory";
 import { GraphClassesNames } from "@/types";
@@ -15,7 +15,7 @@ interface ClassGraphGeneratorProps {
 export default function ClassGraphGenerator({
     closeDialog
 }: ClassGraphGeneratorProps) {
-    const { generateGraphView } = useGraphView();
+    const { initGraph } = useGraph();
     const [graphClassName, setGraphClassName] = useState<GraphClassesNames>();
     const [order, setOrder] = useState(3);
     const [layout, setLayout] = useState('');
@@ -25,18 +25,17 @@ export default function ClassGraphGenerator({
 
         if (graphClassName) {
             const graph = GraphFactory.make({
-                graphClassOptions: {
+                graphClass: {
                     name: graphClassName,
                     order: order
                 }
             });
 
-            generateGraphView({
-                graph,
+            initGraph(graph, {
                 layout,
                 name: `${graphClassName}-${order}`,
                 renderings: 0,
-                coloringOptions: {
+                coloring: {
                     orientation: graphClassName === 'completes' ? 'color' : 'index',
                     show: false
                 }

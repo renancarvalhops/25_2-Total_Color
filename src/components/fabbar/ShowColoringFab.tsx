@@ -1,11 +1,11 @@
-import { useGraphView } from "@/contexts/GraphViewContext";
+import { useGraph } from "@/contexts/GraphViewContext";
 import { PaletteIcon } from "lucide-react";
 import { motion } from "motion/react";
 
 export default function ShowColoringFab() {
-    const { graphView, viewColoring } = useGraphView();
+    const { graph, viewColoring } = useGraph();
 
-    if (!graphView.graph.totalColoring) {
+    if (!graph.totalColoring) {
         return null;
     }
 

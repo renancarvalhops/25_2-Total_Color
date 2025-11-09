@@ -1,14 +1,54 @@
-import { validateTotalColoring } from "@/lib/graphs";
-import { ColoringOrientation, GraphView } from "@/types";
-import cytoscape, { Core, ElementsDefinition, EventObject, SingularElementArgument } from "cytoscape";
+import { GraphView } from "@/types";
+import cytoscape, { Collection, Core, ElementsDefinition, EventObject, SingularElementArgument } from "cytoscape";
 import { RefObject } from "react";
+import { convertToElementId, HexadecimalColors } from "./ViewerUtils";
 
-const generateVisualization = (graphView: GraphView, containerRef: RefObject<HTMLDivElement | null>): Core => {
+type ValidatedTotalColoring = {
+    hasConflict: boolean,
+    adjacentElements: Collection
+}
+
+const generateElements = (matrix: number[][]): ElementsDefinition => {
+    const elements: ElementsDefinition = {
+        nodes: [],
+        edges: []
+    };
+
+    const order = matrix.length;
+
+    for (let i = 0; i < order; i++) {
+        elements.nodes.push({
+            data: {
+                id: `v${i + 1}`,
+                hasConflict: false,
+                colorNumber: ''
+            }
+        });
+
+        for (let j = i + 1; j < order; j++) {
+            if (matrix[i][j]) {
+                elements.edges.push({
+                    data: {
+                        id: `v${i + 1}v${j + 1}`,
+                        source: `v${i + 1}`,
+                        target: `v${j + 1}`,
+                        hasConflict: false,
+                        colorNumber: ''
+                    }
+                });
+            }
+        }
+    }
+
+    return elements;
+};
+
+const generateVisualization = (graph: Graph, graphView: GraphView, containerRef: RefObject<HTMLDivElement | null>): Core => {
     const baseColor = '#526D82';
 
     return cytoscape({
         container: containerRef.current,
-        elements: generateElements(graphView.graph.matrix),
+        elements: generateElements(graph.matrix),
         style: [
             {
                 selector: '*',
@@ -74,39 +114,44 @@ const generateVisualization = (graphView: GraphView, containerRef: RefObject<HTM
     });
 };
 
-const generateElements = (matrix: number[][]): ElementsDefinition => {
-    const elements: ElementsDefinition = {
-        nodes: [],
-        edges: []
+const validateTotalColoring = (targetElement: SingularElementArgument): ValidatedTotalColoring => {
+    let adjacentElements: Collection;
+
+    if (targetElement.isNode()) {
+        adjacentElements = targetElement.neighborhood();
+    } else {
+        const incidentVertices = targetElement.connectedNodes();
+        const adjacentEdges = (incidentVertices.connectedEdges()).difference(targetElement);
+
+        adjacentElements = incidentVertices.union(adjacentEdges);
+    }
+
+    const validationResult: ValidatedTotalColoring = {
+        hasConflict: false,
+        adjacentElements: adjacentElements
     };
 
-    const order = matrix.length;
-
-    for (let i = 0; i < order; i++) {
-        elements.nodes.push({
-            data: {
-                id: `v${i + 1}`,
-                hasConflict: false,
-                colorNumber: ''
-            }
-        });
-
-        for (let j = i + 1; j < order; j++) {
-            if (matrix[i][j]) {
-                elements.edges.push({
-                    data: {
-                        id: `v${i + 1}v${j + 1}`,
-                        source: `v${i + 1}`,
-                        target: `v${j + 1}`,
-                        hasConflict: false,
-                        colorNumber: ''
-                    }
-                });
-            }
+    adjacentElements.forEach(adjacentElement => {
+        if (
+            targetElement.data('colorNumber') &&
+            adjacentElement.data('colorNumber') &&
+            targetElement.data('colorNumber') === adjacentElement.data('colorNumber')
+        ) {
+            validationResult.hasConflict = true;
         }
-    }
-    
-    return elements;
+    });
+
+    return validationResult;
+};
+
+const showColoringValidation = (element: SingularElementArgument) => {
+    const { hasConflict, adjacentElements } = validateTotalColoring(element);
+    element.data('hasConflict', hasConflict);
+
+    adjacentElements.forEach(adjacentElement => {
+        const { hasConflict } = validateTotalColoring(adjacentElement);
+        adjacentElement.data('hasConflict', hasConflict);
+    });
 };
 
 const assignColorNumber = (event: EventObject, updateColor: (elementId: string, previousColor: string, currentColor: string) => void) => {
@@ -152,11 +197,12 @@ const assignColorNumber = (event: EventObject, updateColor: (elementId: string, 
     element.on('unselect', () => {
         const currentColor = element.data('colorNumber');
         const elementId = element.data('id');
+        const color = Number(currentColor) - 1;
 
-        element.style('color', colors[(Number(currentColor) - 1) % colors.length]);
-        element.style('border-color', colors[(Number(currentColor) - 1) % colors.length]);
-        element.style('line-color', colors[(Number(currentColor) - 1) % colors.length]);
-        element.style('text-border-color', colors[(Number(currentColor) - 1) % colors.length]);
+        element.style('color', HexadecimalColors.get(color));
+        element.style('border-color', HexadecimalColors.get(color));
+        element.style('line-color', HexadecimalColors.get(color));
+        element.style('text-border-color', HexadecimalColors.get(color));
 
         updateColor(elementId, previousColor, currentColor);
 
@@ -167,44 +213,13 @@ const assignColorNumber = (event: EventObject, updateColor: (elementId: string, 
     });
 };
 
-const showColoringValidation = (element: SingularElementArgument) => {
-    const { hasConflict, adjacentElements } = validateTotalColoring(element);
-    element.data('hasConflict', hasConflict);
-
-    adjacentElements.forEach(adjacentElement => {
-        const { hasConflict } = validateTotalColoring(adjacentElement);
-        adjacentElement.data('hasConflict', hasConflict);
-    });
-};
-
-const convertToElementId = (elementLabel: string): string => {
-    const labelParts = elementLabel.split('_');
-
-    const elementId = labelParts.length === 2 ?
-        `v${Number(labelParts[0]) + 1}v${Number(labelParts[1]) + 1}` :
-        `v${Number(labelParts[0]) + 1}`;
-    
-    return elementId;
-};
-
-export const colors = [
-    '#eb3b5a',
-    '#3867d6',
-    '#fa8231',
-    '#20bf6b',
-    '#8854d0',
-    '#f7b731',
-    '#a5b1c2',
-    '#4c3a2c',
-    '#000000'
-];
-
 const showColoring = (
     cy: Core,
+    graph: Graph,
     graphView: GraphView,
     updateColor: (elementId: string, previousColor: string, currentColor: string) => void
 ) => {
-    if (!graphView.coloringOptions || !graphView.graph.totalColoring) {
+    if (!graphView.coloring || !graph.totalColoring) {
         return;
     }
 
@@ -218,10 +233,10 @@ const showColoring = (
 
             element.data('colorNumber', currentColor);
             element.style('label', element.data('colorNumber'));
-            element.style('color', colors[color % colors.length]);
-            element.style('border-color', colors[color % colors.length]);
-            element.style('line-color', colors[color % colors.length]);
-            element.style('text-border-color', colors[color % colors.length]);
+            element.style('color', HexadecimalColors.get(color));
+            element.style('border-color', HexadecimalColors.get(color));
+            element.style('line-color', HexadecimalColors.get(color));
+            element.style('text-border-color', HexadecimalColors.get(color));
 
             updateColor(element.data('id'), previousColor, currentColor);
         }, 1500 * counter);
@@ -229,24 +244,24 @@ const showColoring = (
         counter++;
     };
 
-    if (graphView.coloringOptions.orientation === 'color') {
-        graphView.graph.totalColoring.forEach((elementsLabels, color) => {
+    if (graphView.coloring.orientation === 'color') {
+        graph.totalColoring.forEach((elementsLabels, color) => {
             elementsLabels.forEach((elementLabel) => {
                 showColor(color, elementLabel);
             });
         });
-    } else if (graphView.coloringOptions.orientation === 'index') {
-        const maxElementsLabels = graphView.graph.totalColoring.reduce((prev, curr) => (
+    } else if (graphView.coloring.orientation === 'index') {
+        const maxElementsLabels = graph.totalColoring.reduce((prev, curr) => (
             prev.length > curr.length ? prev : curr
         ));
 
         const maxElementIndex = maxElementsLabels.length - 1;
-        const maxColorIndex = graphView.graph.totalColoring.length - 1;
+        const maxColorIndex = graph.totalColoring.length - 1;
 
         for (let elementIndex = 0; elementIndex <= maxElementIndex; elementIndex++) {
             for (let colorIndex = 0; colorIndex <= maxColorIndex; colorIndex++) {
-                if (elementIndex < graphView.graph.totalColoring[colorIndex].length) {
-                    showColor(colorIndex, graphView.graph.totalColoring[colorIndex][elementIndex]);
+                if (elementIndex < graph.totalColoring[colorIndex].length) {
+                    showColor(colorIndex, graph.totalColoring[colorIndex][elementIndex]);
                 }
             }
         }

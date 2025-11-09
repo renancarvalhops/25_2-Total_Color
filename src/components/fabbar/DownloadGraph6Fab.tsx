@@ -1,15 +1,15 @@
-import { useGraphView } from "@/contexts/GraphViewContext";
-import { matrixToGraph6 } from "@/lib/graphs";
+import { useGraph } from "@/contexts/GraphViewContext";
+import Graph6 from "@/lib/graphs/Graph6";
 import { DownloadIcon, LoaderCircleIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
 export default function DownloadGraph6Fab() {
-    const { graphView } = useGraphView();
+    const { graph, graphView } = useGraph();
     const [graph6File, setGraph6File] = useState<Blob>();
 
     useEffect(() => {
-        const blob = new Blob([matrixToGraph6(graphView.graph.matrix)]);
+        const blob = new Blob([Graph6.parse(graph.matrix)]);
         setGraph6File(blob);
     }, [graphView.renderings]);
 

@@ -1,7 +1,7 @@
 import { AcceptedFileExtensions } from "@/types";
-import { graph6ToMatrix } from "./graph6";
+import Graph6 from "./Graph6";
 
-export default class FreeGraph implements Graph {
+export default class GraphFree implements Graph {
     matrix: number[][];
 
     constructor(fileExtension: AcceptedFileExtensions, content: string) {
@@ -10,18 +10,17 @@ export default class FreeGraph implements Graph {
 
     private getMatrix = (fileExtension: AcceptedFileExtensions, content: string): number[][] => {
         let matrix: number[][] = [];
-        console.log(fileExtension);
-    
+
         if (fileExtension === 'g6') {
-            matrix = graph6ToMatrix(content);
+            matrix = Graph6.toMatrix(content);
         } else if (fileExtension === 'txt') {
             const lines = content.split(/\s+/g);
-    
+
             lines.forEach(line => {
                 matrix.push(line.split('').map(char => Number.parseInt(char)));
             });
         }
-    
+
         return matrix;
     }
 }

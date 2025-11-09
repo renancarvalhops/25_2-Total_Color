@@ -2,25 +2,25 @@ import { AcceptedFileExtensions, GraphClassesNames } from "@/types";
 import PathGraph from "./classes/PathGraph";
 import CycleGraph from "./classes/CycleGraph";
 import CompleteGraph from "./classes/CompleteGraph";
-import FreeGraph from "./FreeGraph";
+import FreeGraph from "./GraphFree";
 
 interface MakeArguments {
-    graphClassOptions?: {
+    graphClass?: {
         name: GraphClassesNames,
         order: number
     },
-    graphFreeOptions?: {
+    graphFree?: {
         fileExtension: AcceptedFileExtensions,
         content: string
     }
 }
 
 export default class GraphFactory {
-    static make({ graphClassOptions, graphFreeOptions }: MakeArguments): Graph {
+    static make({ graphClass, graphFree }: MakeArguments): Graph {
         let Graph: Graph;
 
-        if (graphClassOptions) {
-            const { name, order } = graphClassOptions;
+        if (graphClass) {
+            const { name, order } = graphClass;
 
             switch (name) {
                 case 'paths':
@@ -33,12 +33,12 @@ export default class GraphFactory {
                     Graph = new CompleteGraph(order);
                     break;
             }
-        } else if (graphFreeOptions) {
-            const { fileExtension, content } = graphFreeOptions;
+        } else if (graphFree) {
+            const { fileExtension, content } = graphFree;
 
             Graph = new FreeGraph(fileExtension, content);
         } else {
-            throw new Error('Insira informações em graphClassOptions ou graphFreeOptions');
+            throw new Error('Insira informações em graphClass ou graphFree');
         }
 
 

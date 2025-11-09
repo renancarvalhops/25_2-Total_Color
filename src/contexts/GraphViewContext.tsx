@@ -2,26 +2,33 @@ import { GraphView } from "@/types";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type GraphContextType = {
+    graph: Graph,
     graphView: GraphView;
-    generateGraphView: (newGraphView: GraphView) => void;
+    initGraph: (newGraph: Graph, newGraphView: GraphView) => void;
     viewColoring: () => void;
 }
 
-const GraphViewContext = createContext<GraphContextType | null>(null);
+const GraphContext = createContext<GraphContextType | null>(null);
+
+const defaultGraph = {
+    matrix: []
+};
 
 const defaultGraphView = {
-    graph: { matrix: [] },
     layout: '',
     name: '',
     renderings: 0
 };
 
-export function GraphViewProvider({
+export function GraphProvider({
     children
 }: { children: ReactNode }) {
+    const [graph, setGraph] = useState<Graph>(defaultGraph);
     const [graphView, setGraphView] = useState<GraphView>(defaultGraphView);
 
-    const generateGraphView = (newGraphView: GraphView) => {
+    const initGraph = (newGraph: Graph, newGraphView: GraphView) => {
+        setGraph(newGraph);
+        
         setGraphView((prev) => ({
             ...newGraphView,
             renderings: !prev ? 1 : prev.renderings + 1
@@ -30,11 +37,11 @@ export function GraphViewProvider({
 
     const viewColoring = () => {
         setGraphView((prev) => {
-            if (prev.coloringOptions) {
+            if (prev.coloring) {
                 return {
                     ...prev,
-                    coloringOptions: {
-                        orientation: prev.coloringOptions.orientation,
+                    coloring: {
+                        orientation: prev.coloring.orientation,
                         show: true
                     }
                 }
@@ -45,14 +52,14 @@ export function GraphViewProvider({
     };
 
     return (
-        <GraphViewContext.Provider value={{ graphView, generateGraphView, viewColoring }}>
+        <GraphContext.Provider value={{ graph, graphView, initGraph, viewColoring }}>
             {children}
-        </GraphViewContext.Provider>
+        </GraphContext.Provider>
     );
 }
 
-export function useGraphView() {
-    const context = useContext(GraphViewContext);
+export function useGraph() {
+    const context = useContext(GraphContext);
 
     if (!context) {
         throw new Error('useGraphView deve ser utilizado em um <GraphViewProvider>');

@@ -1,16 +1,16 @@
 import { motion } from "motion/react";
 import { Card, CardContent } from "../ui/card";
-import { useGraphView } from "@/contexts/GraphViewContext";
-import { colors as colorsHex } from "./visualization";
+import { useGraph } from "@/contexts/GraphViewContext";
+import { HexadecimalColors } from "./ViewerUtils";
 
 interface ColoringPanelProps {
-    colors: string[]
+    elementColors: string[]
 }
 
 export default function ColoringPanel({
-    colors
+    elementColors
 }: ColoringPanelProps) {
-    const { graphView } = useGraphView();
+    const { graph } = useGraph();
 
     return (
         <motion.section
@@ -21,7 +21,7 @@ export default function ColoringPanel({
             <Card className="absolute left-10 max-w-sm top-10 z-10">
                 <CardContent className="flex flex-col gap-2 text-lg">
                     {
-                        (graphView.graph.totalColoring) &&
+                        (graph.totalColoring) &&
                         <div className="flex gap-2">
                             <span>Número cromático total:</span>
                             <motion.span
@@ -29,24 +29,29 @@ export default function ColoringPanel({
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 1 }}
                             >
-                                {graphView.graph.totalColoring.length}
+                                {graph.totalColoring.length}
                             </motion.span>
                         </div>
                     }
 
                     <div className="flex flex-col gap-2">
-                        <span>Cores utilizadas: {colors.length}</span>
+                        <span>Cores utilizadas: {elementColors.length}</span>
+
                         <div className="flex gap-2">
-                            {colors.map((color) => (
-                                <span
-                                    key={color}
-                                    style={{
-                                        color: colorsHex[(Number(color) - 1) % colorsHex.length]
-                                    }}
-                                >
-                                    {color}
-                                </span>
-                            ))}
+                            {elementColors.map((elementColor) => {
+                                const color = Number(elementColor) - 1;
+
+                                return (
+                                    <span
+                                        key={elementColor}
+                                        style={{
+                                            color: HexadecimalColors.get(color)
+                                        }}
+                                    >
+                                        {elementColor}
+                                    </span>
+                                );
+                            })}
                         </div>
                     </div>
                 </CardContent>

@@ -1,13 +1,13 @@
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { assignColorNumber, generateVisualization, showColoring } from "./visualization";
-import { useGraphView } from "@/contexts/GraphViewContext";
+import { assignColorNumber, generateVisualization, showColoring } from "./ViewerFeatures";
+import { useGraph } from "@/contexts/GraphViewContext";
 import { Core } from "cytoscape";
 import Welcome from "./Welcome";
 import ColoringPanel from "./ColoringPanel";
 
 export default function GraphViewer() {
-    const { graphView } = useGraphView();
+    const { graph, graphView } = useGraph();
     const cyContainerRef = useRef<HTMLDivElement | null>(null);
     const [coloring, setColoring] = useState<Map<string, string[]>>(new Map());
     const [cytoscape, setCytoscape] = useState<Core>();
@@ -42,8 +42,8 @@ export default function GraphViewer() {
 
     useEffect(() => {
         if (graphView.renderings > 0) {
-            const cytoscapeInstance = generateVisualization(graphView, cyContainerRef);
-    
+            const cytoscapeInstance = generateVisualization(graph, graphView, cyContainerRef);
+
             cytoscapeInstance.elements().on('select', (e) => assignColorNumber(e, updateColor));
             setColoring(new Map());
             setCytoscape(cytoscapeInstance);
@@ -51,10 +51,10 @@ export default function GraphViewer() {
     }, [graphView.renderings]);
 
     useEffect(() => {
-        if (cytoscape && graphView.graph.totalColoring) {
-            showColoring(cytoscape, graphView, updateColor);
+        if (cytoscape && graph.totalColoring) {
+            showColoring(cytoscape, graph, graphView, updateColor);
         }
-    }, [graphView.coloringOptions?.show]);
+    }, [graphView.coloring?.show]);
 
     return (
         <motion.section
@@ -66,11 +66,9 @@ export default function GraphViewer() {
                 <>
                     <div ref={cyContainerRef} className={`h-full w-full ${graphView.renderings < 1 && 'hidden'}`}></div>
 
-                    <ColoringPanel colors={Array.from(coloring.keys())} />
+                    <ColoringPanel elementColors={Array.from(coloring.keys())} />
                 </>
             }
-
-
         </motion.section>
     );
 }

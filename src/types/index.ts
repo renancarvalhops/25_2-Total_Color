@@ -3,8 +3,7 @@ export type AcceptedFileExtensions = "txt" | "g6";
 export type ColoringOrientation = "color" | "index";
 
 export interface GraphView {
-    graph: Graph;
-    coloringOptions?: {
+    coloring?: {
         show: boolean;
         orientation: ColoringOrientation;
     };

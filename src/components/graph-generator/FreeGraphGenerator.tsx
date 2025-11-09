@@ -2,7 +2,7 @@ import { FormEventHandler, useState } from "react";
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "../ui/shadcn-io/dropzone";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { useGraphView } from "@/contexts/GraphViewContext";
+import { useGraph } from "@/contexts/GraphViewContext";
 import { AcceptedFileExtensions } from "@/types";
 import { layouts } from ".";
 import GraphFactory from "@/lib/graphs/GraphFactory";
@@ -20,7 +20,7 @@ interface FreeGraphGeneratorProps {
 export default function FreeGraphGenerator({
     closeDialog
 }: FreeGraphGeneratorProps) {
-    const { generateGraphView } = useGraphView();
+    const { initGraph } = useGraph();
     const [files, setFiles] = useState<File[]>();
     const [graphFile, setGraphFile] = useState<GraphFreeOptions & { name: string }>();
     const [layout, setLayout] = useState<string>('');
@@ -58,14 +58,13 @@ export default function FreeGraphGenerator({
 
         if (graphFile) {
             const graph = GraphFactory.make({
-                graphFreeOptions: {
+                graphFree: {
                     fileExtension: graphFile.fileExtension,
                     content: graphFile.content
                 }
             });
 
-            generateGraphView({
-                graph,
+            initGraph(graph, {
                 layout,
                 name: graphFile.name,
                 renderings: 0
