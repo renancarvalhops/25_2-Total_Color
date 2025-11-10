@@ -37,7 +37,7 @@ export default function ColoringPanel({
                     <div className="flex flex-col gap-2">
                         <span>Cores utilizadas: {elementColors.length}</span>
 
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                             {elementColors.map((elementColor) => {
                                 const color = Number(elementColor) - 1;
 
