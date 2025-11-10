@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { assignColorNumber, generateVisualization, showColoring } from "./ViewerFeatures";
+import { assignElementColor, generateVisualization, showColoring } from "./ViewerFeatures";
 import { useGraph } from "@/contexts/GraphViewContext";
 import { Core } from "cytoscape";
 import Welcome from "./Welcome";
@@ -44,7 +44,7 @@ export default function GraphViewer() {
         if (graphView.renderings > 0) {
             const cytoscapeInstance = generateVisualization(graph, graphView, cyContainerRef);
 
-            cytoscapeInstance.elements().on('select', (e) => assignColorNumber(e, updateColor));
+            cytoscapeInstance.elements().on('select', (e) => assignElementColor(e, updateColor));
             setColoring(new Map());
             setCytoscape(cytoscapeInstance);
         }

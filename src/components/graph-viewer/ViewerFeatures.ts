@@ -20,7 +20,7 @@ const generateElements = (matrix: number[][]): ElementsDefinition => {
         const nodeData: TCNodeDataDefinition = {
             id: `v${i + 1}`,
             hasConflict: false,
-            colorNumber: ''  
+            elementColor: ''
         };
 
         elements.nodes.push({
@@ -34,7 +34,7 @@ const generateElements = (matrix: number[][]): ElementsDefinition => {
                     source: `v${i + 1}`,
                     target: `v${j + 1}`,
                     hasConflict: false,
-                    colorNumber: ''
+                    elementColor: ''
                 };
 
                 elements.edges.push({
@@ -151,9 +151,9 @@ const validateTotalColoring = (targetElement: SingularElementArgument): Validate
 
     adjacentElements.forEach(adjacentElement => {
         if (
-            targetElement.data('colorNumber') &&
-            adjacentElement.data('colorNumber') &&
-            targetElement.data('colorNumber') === adjacentElement.data('colorNumber')
+            targetElement.data('elementColor') &&
+            adjacentElement.data('elementColor') &&
+            targetElement.data('elementColor') === adjacentElement.data('elementColor')
         ) {
             validationResult.hasConflict = true;
         }
@@ -172,19 +172,19 @@ const showColoringValidation = (element: SingularElementArgument) => {
     });
 };
 
-const assignColorNumber = (event: EventObject, updateColor: (elementId: string, previousColor: string, currentColor: string) => void) => {
+const assignElementColor = (event: EventObject, updateColor: (elementId: string, previousColor: string, currentColor: string) => void) => {
     const element: SingularElementArgument = event.target;
     let isFirstKeyPress = true;
-    const previousColor = element.data('colorNumber');
+    const previousColor = element.data('elementColor');
 
     const keydownHandler = (event: KeyboardEvent) => {
         const key = event.key;
 
         if (key === 'Backspace') {
-            const colorNumber = element.data('colorNumber');
+            const elementColor = element.data('elementColor');
 
-            element.data('colorNumber', colorNumber.substring(0, colorNumber.length - 1));
-            element.style('label', element.data('colorNumber'));
+            element.data('elementColor', elementColor.substring(0, elementColor.length - 1));
+            element.style('label', element.data('elementColor'));
         }
     }
 
@@ -196,24 +196,24 @@ const assignColorNumber = (event: EventObject, updateColor: (elementId: string, 
             if (isFirstKeyPress) {
                 isFirstKeyPress = false;
 
-                element.data('colorNumber', key);
+                element.data('elementColor', key);
             } else {
-                element.data('colorNumber', element.data('colorNumber') + key);
+                element.data('elementColor', element.data('elementColor') + key);
             }
 
-            element.style('label', element.data('colorNumber'));
+            element.style('label', element.data('elementColor'));
         } else {
             element.unselect();
-        }      
+        }
     }
 
     window.addEventListener('keydown', keydownHandler);
     window.addEventListener('keypress', keypressHandler);
 
     element.off('unselect');
-    
+
     element.on('unselect', () => {
-        const currentColor = element.data('colorNumber');
+        const currentColor = element.data('elementColor');
         const elementId = element.data('id');
         const color = Number(currentColor) - 1;
 
@@ -246,11 +246,11 @@ const showColoring = (
     const showColor = (color: number, elementLabel: string) => {
         setTimeout(() => {
             const element = cy.$id(convertToElementId(elementLabel));
-            const previousColor = element.data('colorNumber');
+            const previousColor = element.data('elementColor');
             const currentColor = String(color + 1);
 
-            element.data('colorNumber', currentColor);
-            element.style('label', element.data('colorNumber'));
+            element.data('elementColor', currentColor);
+            element.style('label', element.data('elementColor'));
             element.classes('');
             element.addClass(HexadecimalColors.getWithoutHash(color));
 
@@ -284,4 +284,4 @@ const showColoring = (
     }
 };
 
-export { generateVisualization, assignColorNumber, showColoring }
+export { generateVisualization, assignElementColor, showColoring }

@@ -17,7 +17,7 @@ export interface GraphView {
 export interface TCNodeDataDefinition extends NodeDataDefinition {
     id: string,
     hasConflict: boolean,
-    colorNumber: string
+    elementColor: string
 }
 
 export interface TCEdgeDataDefinition extends EdgeDataDefinition {
@@ -25,5 +25,5 @@ export interface TCEdgeDataDefinition extends EdgeDataDefinition {
     source: string,
     target: string,
     hasConflict: boolean,
-    colorNumber: string
+    elementColor: string
 }
