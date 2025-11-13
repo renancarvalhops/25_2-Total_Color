@@ -17,7 +17,7 @@ export default function ClassGraphGenerator({
 }: ClassGraphGeneratorProps) {
     const { initGraph } = useGraph();
     const [graphClassName, setGraphClassName] = useState<GraphClassesNames>();
-    const [order, setOrder] = useState(3);
+    const [order, setOrder] = useState('3');
     const [layout, setLayout] = useState('');
 
     const handleSubmit: FormEventHandler = (e) => {
@@ -27,7 +27,7 @@ export default function ClassGraphGenerator({
             const graph = GraphFactory.make({
                 graphClass: {
                     name: graphClassName,
-                    order: order
+                    order: order ? Number(order) : 1
                 }
             });
 
@@ -86,10 +86,10 @@ export default function ClassGraphGenerator({
                         type="number"
                         id="order"
                         name="order"
-                        min={1}
+                        min={graphClassName === 'cycles' ? 3 : 1}
                         value={order}
                         onChange={(e) => {
-                            setOrder(Number(e.target.value))
+                            setOrder(e.target.value)
                         }}
                     />
                 </div>
