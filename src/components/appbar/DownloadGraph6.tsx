@@ -1,9 +1,9 @@
 import { useGraph } from "@/contexts/GraphContext";
-import Graph6 from "@/lib/graphs/Graph6";
 import { DownloadIcon, LoaderCircleIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { RippleButton } from "../ui/shadcn-io/ripple-button";
+import Graph6 from "graph6";
 
 export default function DownloadGraph6() {
     const { graph, graphView } = useGraph();
