@@ -1,11 +1,12 @@
 import About from "./About";
 import DownloadGraph6 from "./DownloadGraph6";
+import Instructions from "./Instructions";
 import NewGraph from "./NewGraph";
 import ShowColoring from "./ShowColoring";
 
 export default function AppBar() {
     return (
-        <menu className="bg-blue-500 flex gap-10 items-center justify-between px-12 py-4 relative shadow">
+        <menu className="bg-blue-500 flex flex-col gap-4 items-center justify-between lg:flex-row px-12 py-4 relative shadow">
 
             <h2 className="flex gap-[0.1rem] select-none text-2xl text-white">
                 <span className="hover:text-red-500">T</span>
@@ -21,7 +22,9 @@ export default function AppBar() {
                 <span className="hover:text-amber-500">r</span>
             </h2>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
+                <Instructions />
+                
                 <DownloadGraph6 />
 
                 <ShowColoring />

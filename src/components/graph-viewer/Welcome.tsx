@@ -4,7 +4,7 @@ import GraphGenerator from "../graph-generator";
 export default function Welcome() {
     return (
         <motion.div
-            className="flex flex-col md:flex-row gap-20"
+            className="flex flex-col flex-wrap items-center justify-center md:flex-row gap-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
