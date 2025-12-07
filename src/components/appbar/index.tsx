@@ -25,11 +25,11 @@ export default function AppBar() {
             <div className="flex flex-wrap gap-2">
                 <Instructions />
                 
-                <DownloadGraph6 />
-
                 <ShowColoring />
 
                 <NewGraph />
+
+                <DownloadGraph6 />
 
                 <About />
             </div>

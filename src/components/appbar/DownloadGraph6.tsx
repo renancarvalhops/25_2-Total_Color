@@ -14,7 +14,7 @@ export default function DownloadGraph6() {
         setGraph6File(blob);
     }, [graphRenderings]);
 
-    if (graphRenderings < 1) {
+    if (graph.matrix.length === 0) {
         return null;
     }
 
