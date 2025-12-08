@@ -215,11 +215,11 @@ const assignElementColor = (event: EventObject, updateColor: (elementId: string,
     element.on('unselect', () => {
         const currentColor = element.data('elementColor');
         const elementId = element.data('id');
-        const color = Number(currentColor) - 1;
 
-        if (color >= 0) {
-            element.classes('');
-            element.addClass(HexadecimalColors.getWithoutHash(color));
+        element.classes('');
+
+        if (currentColor) {
+            element.addClass(HexadecimalColors.getWithoutHash(Number(currentColor)));
         }
 
         updateColor(elementId, previousColor, currentColor);
