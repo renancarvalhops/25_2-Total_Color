@@ -25,6 +25,7 @@ export default function FreeGraphGenerator({
     const [files, setFiles] = useState<File[]>();
     const [graphFile, setGraphFile] = useState<GraphFreeOptions & { name: string }>();
     const [layout, setLayout] = useState<string>('');
+    const [isColored, setIsColored] = useState(false);
 
     const handleDrop = (newFiles: File[]) => {
         setFiles(newFiles);
@@ -61,13 +62,18 @@ export default function FreeGraphGenerator({
             const graph = GraphFactory.make({
                 graphFree: {
                     fileExtension: graphFile.fileExtension,
-                    content: graphFile.content
+                    content: graphFile.content,
+                    isColored: isColored
                 }
             });
 
             initGraph(graph, {
                 layout,
-                name: graphFile.name
+                name: graphFile.name,
+                coloring: {
+                    orientation: 'color',
+                    show: false
+                }                
             });
         }
 
@@ -81,7 +87,7 @@ export default function FreeGraphGenerator({
         >
             <section className="flex flex-col gap-4">
                 <h2 className="border-b-2 border-b-gray-500 font-bold">
-                    Carregue um arquivo .txt da matriz ou .g6
+                    Carregue um arquivo .txt ou .g6
                 </h2>
 
                 <div className="w-full flex">
@@ -118,6 +124,19 @@ export default function FreeGraphGenerator({
                             </div>
                         </CollapsibleContent>
                     </Collapsible>
+                </div>
+
+                <div className="border-2 hover:opacity-70 rounded">
+                    <label className="cursor-pointer flex gap-2 p-2">
+                        <input
+                            type="checkbox"
+                            className="cursor-pointer"
+                            checked={isColored}
+                            onChange={(e) => setIsColored(e.target.checked)}
+                        />
+
+                        É um grafo colorido?
+                    </label>
                 </div>
 
                 <div className="flex flex-col gap-4 items-center">

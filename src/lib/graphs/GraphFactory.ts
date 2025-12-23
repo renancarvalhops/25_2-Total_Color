@@ -11,7 +11,8 @@ interface MakeArguments {
     },
     graphFree?: {
         fileExtension: AcceptedFileExtensions,
-        content: string
+        content: string,
+        isColored: boolean
     }
 }
 
@@ -34,9 +35,9 @@ export default class GraphFactory {
                     break;
             }
         } else if (graphFree) {
-            const { fileExtension, content } = graphFree;
+            const { fileExtension, content, isColored } = graphFree;
 
-            Graph = new FreeGraph(fileExtension, content);
+            Graph = new FreeGraph(fileExtension, content, isColored);
         } else {
             throw new Error('Insira informações em graphClass ou graphFree');
         }
