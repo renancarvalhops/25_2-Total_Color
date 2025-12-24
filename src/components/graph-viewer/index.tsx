@@ -71,7 +71,9 @@ export default function GraphViewer() {
                 <>
                     <div ref={cyContainerRef} className={`h-full w-full ${graphRenderings < 1 && 'hidden'}`}></div>
 
-                    <ColoringPanel elementColors={Array.from(coloring.keys())} />
+                    <ColoringPanel
+                        elementColors={Array.from(coloring.keys()).sort((a, b) => Number(a) - Number(b))}
+                    />
                 </>
                 :
                 <Welcome />
