@@ -29,6 +29,28 @@ export default class GraphFree implements Graph {
         return matrix;
     }
 
+    public addVertex() {
+        const order = this.matrix.length;
+        this.matrix.push(new Array(order).fill(0));
+
+        this.matrix = this.matrix.map((vec) => {
+            vec.push(0);
+            return vec;
+        });
+    }
+
+    public rmVertex(vertex: number) {
+        this.matrix.splice(vertex, 1);
+    }
+
+    public addEdge(origin: number, target: number) {
+        this.matrix[origin][target] = 1;
+    }
+
+    public rmEdge(origin: number, target: number) {
+        this.matrix[origin][target] = 0;
+    }
+
     private getColoredMatrix(content: string): [number[][], string[][]] {
         const lines = content.split(/\r?\n/g);
         const order = Number.parseInt(lines[0]);

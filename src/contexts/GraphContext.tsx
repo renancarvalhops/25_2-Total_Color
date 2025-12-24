@@ -1,3 +1,4 @@
+import GraphFree from "@/lib/graphs/GraphFree";
 import { GraphView } from "@/types";
 import { createContext, ReactNode, useContext, useState } from "react";
 
@@ -8,6 +9,10 @@ type GraphContextType = {
     initGraph: (newGraph: Graph, newGraphView: GraphView) => void;
     resetGraph: () => void;
     viewColoring: () => void;
+    // addVertex: () => void;
+    // rmVertex: (vertex: number) => void;
+    // addEdge: (origin: number, target: number) => void;
+    // rmEdge: (origin: number, target: number) => void;    
 }
 
 const GraphContext = createContext<GraphContextType | null>(null);
@@ -34,6 +39,30 @@ export function GraphProvider({
         setGraphRenderigs(prev => prev + 1);
     };
 
+    // const addVertex = () => {
+    //     if (graph instanceof GraphFree) {
+    //         graph.addVertex();
+    //     }
+    // }
+
+    // const rmVertex = (vertex: number) => {
+    //     if (graph instanceof GraphFree) {
+    //         graph.rmVertex(vertex);
+    //     }
+    // }
+
+    // const addEdge = (origin: number, target: number) => {
+    //     if (graph instanceof GraphFree) {
+    //         graph.addEdge(origin, target);
+    //     }
+    // }
+
+    // const rmEdge = (origin: number, target: number) => {
+    //     if (graph instanceof GraphFree) {
+    //         graph.rmEdge(origin, target);
+    //     }
+    // }
+
     const resetGraph = () => {
         setGraph(defaultGraph);
         setGraphView(defaultGraphView);
@@ -56,7 +85,18 @@ export function GraphProvider({
     };
 
     return (
-        <GraphContext.Provider value={{ graph, graphView, graphRenderings, initGraph, resetGraph, viewColoring }}>
+        <GraphContext.Provider value={{
+            graph,
+            graphView,
+            graphRenderings,
+            initGraph,
+            // addVertex,
+            // rmVertex,
+            // addEdge,
+            // rmEdge,
+            resetGraph,
+            viewColoring
+        }}>
             {children}
         </GraphContext.Provider>
     );

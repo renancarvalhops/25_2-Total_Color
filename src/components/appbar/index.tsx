@@ -1,4 +1,5 @@
 import About from "./About";
+import DownloadColoredGraph from "./DownloadColoredGraph";
 import DownloadGraph6 from "./DownloadGraph6";
 import Instructions from "./Instructions";
 import NewGraph from "./NewGraph";
@@ -28,6 +29,8 @@ export default function AppBar() {
                 <ShowColoring />
 
                 <NewGraph />
+
+                {/* <DownloadColoredGraph /> */}
 
                 <DownloadGraph6 />
 

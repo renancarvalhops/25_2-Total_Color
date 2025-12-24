@@ -1,11 +1,11 @@
 import { useGraph } from "@/contexts/GraphContext";
-import { FileType2Icon, LoaderCircleIcon } from "lucide-react";
+import { DownloadIcon, LoaderCircleIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { RippleButton } from "../ui/shadcn-io/ripple-button";
 import Graph6 from "graph6";
 
-export default function DownloadGraph6() {
+export default function DownloadColoredGraph() {
     const { graph, graphView, graphRenderings } = useGraph();
     const [graph6File, setGraph6File] = useState<Blob>();
 
@@ -29,8 +29,8 @@ export default function DownloadGraph6() {
                 href={graph6File ? URL.createObjectURL(graph6File) : ''}
             >
                 <RippleButton variant={'outline'}>
-                    {graph6File ? <FileType2Icon /> : <LoaderCircleIcon className="animate-spin" />}
-                    <span className="hidden lg:inline">Baixar em graph6</span>
+                    {graph6File ? <DownloadIcon /> : <LoaderCircleIcon className="animate-spin" />}
+                    <span className="hidden lg:inline">Baixar grafo colorido</span>
                 </RippleButton>
             </a>
         </motion.div>

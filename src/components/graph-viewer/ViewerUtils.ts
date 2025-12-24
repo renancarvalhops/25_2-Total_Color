@@ -29,8 +29,8 @@ class HexadecimalColors {
     }
 }
 
-const convertToElementId = (elementLabel: string): string => {
-    const labelParts = elementLabel.split('_');
+const convertToElementId = (elementLabel: string | number): string => {
+    const labelParts = String(elementLabel).split('_');
 
     const elementId = labelParts.length === 2 ?
         `v${Number(labelParts[0]) + 1}v${Number(labelParts[1]) + 1}` :
@@ -39,4 +39,8 @@ const convertToElementId = (elementLabel: string): string => {
     return elementId;
 };
 
-export { HexadecimalColors, convertToElementId }
+const convertToElementLabel = (elementId: string): number => {
+    return Number.parseInt(elementId.replace('v', '')) - 1;
+}
+
+export { HexadecimalColors, convertToElementId, convertToElementLabel }

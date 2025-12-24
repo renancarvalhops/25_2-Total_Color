@@ -1,7 +1,8 @@
 import { GraphView, TCEdgeDataDefinition, TCNodeDataDefinition } from "@/types";
 import cytoscape, { Collection, Core, ElementsDefinition, EventObject, SingularElementArgument } from "cytoscape";
 import { RefObject } from "react";
-import { convertToElementId, HexadecimalColors } from "./ViewerUtils";
+import { convertToElementId, convertToElementLabel, HexadecimalColors } from "./ViewerUtils";
+import GraphFree from "@/lib/graphs/GraphFree";
 
 type ValidatedTotalColoring = {
     hasConflict: boolean,
@@ -45,6 +46,65 @@ const generateElements = (matrix: number[][]): ElementsDefinition => {
     }
 
     return elements;
+};
+
+const createVertex = (event: EventObject, graph: Graph) => {
+    if (event.originalEvent.altKey && graph instanceof GraphFree) {
+        const nodeData: TCNodeDataDefinition = {
+            id: convertToElementId(graph.matrix.length),
+            hasConflict: false,
+            elementColor: ''
+        };
+    
+        event.cy.add({
+            data: nodeData,
+            position: event.position
+        });
+
+        graph.addVertex();
+    }
+};
+
+const createEdge = (event: EventObject, graph: Graph) => {
+    const element: SingularElementArgument = event.target;
+
+    const keypressHandler = (kbEvent: KeyboardEvent) => {
+        const key = kbEvent.key;
+        const cy = event.cy;
+        const nodesSelected = cy.nodes(':selected');
+
+        if ((key === 'e' || key === 'E') && nodesSelected.length === 2 && graph instanceof GraphFree) {
+            const sourceId = nodesSelected[0].id();
+            const targetId = nodesSelected[1].id();
+            const edgeId = `${sourceId}${targetId}`
+
+            const edgedata: TCEdgeDataDefinition = {
+                id: edgeId,
+                source: sourceId,
+                target: targetId,
+                hasConflict: false,
+                elementColor: ''
+            };
+
+            if (cy.$id(edgeId).length === 0) {
+                cy.add({
+                    data: edgedata
+                });
+
+                graph.addEdge(convertToElementLabel(sourceId), convertToElementLabel(targetId));
+            }
+
+            nodesSelected.unselect();
+        } 
+    }
+
+    window.addEventListener('keypress', keypressHandler);
+
+    element.off('unselect');
+
+    element.on('unselect', () => {
+        window.removeEventListener('keypress', keypressHandler);
+    });    
 };
 
 const hexColorsCssClasses = HexadecimalColors.getAll().map((hexColor) => ({
@@ -202,7 +262,7 @@ const assignElementColor = (event: EventObject, updateColor: (elementId: string,
             }
 
             element.style('label', element.data('elementColor'));
-        } else {
+        } else if (key === 'Enter') {
             element.unselect();
         }
     }
@@ -293,4 +353,4 @@ const showColoring = (
     return intervalId;
 };
 
-export { generateVisualization, assignElementColor, showColoring }
+export { generateVisualization, assignElementColor, showColoring, createVertex, createEdge }

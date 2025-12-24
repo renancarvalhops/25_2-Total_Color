@@ -1,10 +1,11 @@
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { assignElementColor, generateVisualization, showColoring } from "./ViewerFeatures";
+import { assignElementColor, createEdge, createVertex, generateVisualization, showColoring } from "./ViewerFeatures";
 import { useGraph } from "@/contexts/GraphContext";
 import { Core } from "cytoscape";
 import Welcome from "./Welcome";
 import ColoringPanel from "./InfoPanel";
+import { TCNodeDataDefinition } from "@/types";
 
 export default function GraphViewer() {
     const { graph, graphView, graphRenderings } = useGraph();
@@ -42,11 +43,14 @@ export default function GraphViewer() {
 
     useEffect(() => {
         if (graphRenderings > 0) {
-            const cytoscapeInstance = generateVisualization(graph, graphView, cyContainerRef);
+            const cy = generateVisualization(graph, graphView, cyContainerRef);
 
-            cytoscapeInstance.elements().on('select', (e) => assignElementColor(e, updateColor));
+            cy.on('select', '*', (e) => assignElementColor(e, updateColor));
+            cy.on('select', 'node', (e) => createEdge(e, graph));
+            cy.on('tap', (e) => createVertex(e, graph));
+
             setColoring(new Map());
-            setCytoscape(cytoscapeInstance);
+            setCytoscape(cy);
         }
     }, [graphRenderings]);
 
