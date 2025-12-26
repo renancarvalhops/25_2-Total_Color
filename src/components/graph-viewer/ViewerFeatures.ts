@@ -3,6 +3,7 @@ import cytoscape, { Collection, Core, ElementsDefinition, EventObject, SingularE
 import { RefObject } from "react";
 import { convertToElementId, convertToElementLabel, HexadecimalColors } from "./ViewerUtils";
 import GraphFree from "@/lib/graphs/FreeGraph";
+import { Graph } from "@/lib/graphs/Graph";
 
 type ValidatedTotalColoring = {
     hasConflict: boolean,
