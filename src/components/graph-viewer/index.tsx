@@ -41,26 +41,35 @@ export default function GraphViewer() {
     }
 
     useEffect(() => {
-        if (graphRenderings > 0) {
-            const cy = generateVisualization(graph, graphView, cyContainerRef);
+        const handleKeyDown = (e: KeyboardEvent) => {
+            switch (e.key) {
+                case "v":
+                    changeGraphViewMode("vertex");
+                    break;
+                case "e":
+                    changeGraphViewMode("edge");
+                    break;
+                case "c":
+                    changeGraphViewMode("coloring");
+                    break;
+            }
+        };
 
-            window.addEventListener("keypress", (e) => {
-                switch (e.key) {
-                    case "v":
-                        changeGraphViewMode("vertex");
-                        break;
-                    case "e":
-                        changeGraphViewMode("edge");
-                        break;
-                    case "c":
-                        changeGraphViewMode("coloring");
-                        break;
-                }
-            });
+        window.addEventListener("keydown", handleKeyDown);
 
-            setColoring(new Map());
-            setCytoscape(cy);
-        }
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
+
+
+    useEffect(() => {
+        if (graphRenderings <= 0) return;
+
+        const cy = generateVisualization(graph, graphView, cyContainerRef);
+
+        setColoring(new Map());
+        setCytoscape(cy);
     }, [graphRenderings]);
 
     useEffect(() => {

@@ -2,13 +2,15 @@ import { motion } from "motion/react";
 import { Card, CardContent } from "../ui/card";
 import { useGraph } from "@/contexts/GraphContext";
 import { HexadecimalColors } from "./ViewerUtils";
-import { PiHandTapLight, PiMouseScrollLight } from "react-icons/pi";
+import { PiHandTapLight, PiKeyReturn, PiMouseScrollLight } from "react-icons/pi";
 import { HiCursorClick } from "react-icons/hi";
-import { BsShiftFill } from "react-icons/bs";
+import { BsCircleFill, BsShiftFill } from "react-icons/bs";
 import { Modes } from "@/types";
+import { InfoIcon } from "lucide-react";
 
 const onlyMobile = "flex gap-2 items-center lg:hidden";
 const onlyDesktop = "gap-2 hidden items-center lg:flex";
+const bothDevices = "flex gap-2 items-center";
 
 export const InstructionsText = () => (
     <div className="flex flex-col gap-2">
@@ -39,8 +41,13 @@ export const InstructionsText = () => (
         </div>
 
         <div className={onlyMobile}>
-            <PiHandTapLight size={30} />
+            <PiHandTapLight size={25} />
             Toque para interagir com um elemento do grafo
+        </div>
+
+        <div className={bothDevices}>
+            <InfoIcon size={30} />
+            Caso precise, você poderá acessar essas informações novamente pelo botão "Instruções" no menu
         </div>
     </div>
 );
@@ -152,6 +159,29 @@ export default function InfoPanel({
                                     {modesConfig[graphView.mode].instruction}
                                 </p>
                             </div>
+
+                            {graphView.mode === "coloring" && (
+                                <>
+                                    <div className="flex gap-2 items-center">
+                                        <HiCursorClick className="hidden lg:flex" size={60} />
+                                        <PiHandTapLight className="flex lg:hidden" size={35} />
+
+                                        <p>
+                                            <span>Em seguida, </span>
+                                            <span className="hidden lg:inline">clique </span>
+                                            <span className="inline lg:hidden">toque </span>
+                                            <span>em um espaço disponível <span className="hidden lg:inline">(ou pressione <kbd>Enter</kbd>)</span> para finalizar a atribuição da cor e permitir que o sistema valide sua corretude</span>
+                                        </p>
+                                    </div>
+
+                                    <div className="flex gap-2 items-center">
+                                        <BsCircleFill className="text-red-700" size={30} />
+
+                                        <p>Caso haja conflito, o sistema preencherá todo o elemento de vermelho</p>
+                                    </div>
+                                </>
+                            )}
+
                         </section>
                     )}
 

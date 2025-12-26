@@ -222,27 +222,16 @@ const showColoringValidation = (element: SingularElementArgument) => {
 
 const assignElementColor = (event: EventObject, updateColor: (elementId: string, previousColor: string, currentColor: string) => void) => {
     const element: SingularElementArgument = event.target;
-    let isFirstKeyPress = true;
+    let isFirstKeyDown = true;
     const previousColor = element.data('elementColor');
 
-    const keydownHandler = (event: KeyboardEvent) => {
-        const key = event.key;
-
-        if (key === 'Backspace') {
-            const elementColor = element.data('elementColor');
-
-            element.data('elementColor', elementColor.substring(0, elementColor.length - 1));
-            element.style('label', element.data('elementColor'));
-        }
-    }
-
-    const keypressHandler = (event: KeyboardEvent) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
         const key = event.key;
         const isNumber = /\d/g;
 
         if (isNumber.test(key)) {
-            if (isFirstKeyPress) {
-                isFirstKeyPress = false;
+            if (isFirstKeyDown) {
+                isFirstKeyDown = false;
 
                 element.data('elementColor', key);
             } else {
@@ -250,13 +239,17 @@ const assignElementColor = (event: EventObject, updateColor: (elementId: string,
             }
 
             element.style('label', element.data('elementColor'));
+        } else if (key === 'Backspace') {
+            const elementColor = element.data('elementColor');
+
+            element.data('elementColor', elementColor.substring(0, elementColor.length - 1));
+            element.style('label', element.data('elementColor'));
         } else if (key === 'Enter') {
             element.unselect();
         }
     }
 
-    window.addEventListener('keydown', keydownHandler);
-    window.addEventListener('keypress', keypressHandler);
+    window.addEventListener('keydown', handleKeyDown);
 
     element.off('unselect');
 
@@ -272,8 +265,7 @@ const assignElementColor = (event: EventObject, updateColor: (elementId: string,
 
         updateColor(elementId, previousColor, currentColor);
 
-        window.removeEventListener('keydown', keydownHandler);
-        window.removeEventListener('keypress', keypressHandler);
+        window.removeEventListener('keydown', handleKeyDown);
 
         showColoringValidation(element);
     });

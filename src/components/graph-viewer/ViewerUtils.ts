@@ -2,10 +2,10 @@ import { mod } from "@/lib/utils";
 
 class HexadecimalColors {
     private static hexColors = [
-        "#E6194B", "#3CB44B", "#FFE119", "#4363D8", "#F58231",
-        "#911EB4", "#46F0F0", "#F032E6", "#BCF60C", "#FABEBE",
-        "#008080", "#E6BEFF", "#9A6324", "#FFD8B1", "#800000",
-        "#AAFFC3", "#808000", "#FF7F00", "#000075", "#FF1493",
+        "#3CB44B", "#FFE119", "#4363D8", "#F58231", "#911EB4",
+        "#46F0F0", "#F032E6", "#BCF60C", "#FABEBE", "#008080",
+        "#E6BEFF", "#9A6324", "#FFD8B1", "#800000", "#AAFFC3",
+        "#808000", "#FF7F00", "#E6194B", "#000075", "#FF1493",
         "#00CED1", "#9400D3", "#32CD32", "#FF4500", "#1E90FF",
         "#FFD700", "#4B0082", "#00FA9A", "#DC143C", "#00BFFF",
         "#ADFF2F", "#FF69B4", "#8B4513", "#40E0D0", "#9932CC",

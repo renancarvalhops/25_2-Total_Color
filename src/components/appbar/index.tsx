@@ -33,7 +33,7 @@ export default function AppBar() {
 
                 <ButtonMode mode="edge" text="Adicionar aresta (e)" />
 
-                <ButtonMode mode="coloring" text="Adicionar cor (c)" />
+                <ButtonMode mode="coloring" text="Atribuir cor (c)" />
 
                 <NewGraph />
 
