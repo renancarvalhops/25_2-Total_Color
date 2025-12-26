@@ -18,7 +18,7 @@ export default function ShowColoringFab() {
         >
             <RippleButton variant={'outline'} onClick={() => viewColoring()}>
                 <PaletteIcon />
-                <span className="hidden lg:inline">Apresentar Coloração</span>
+                Apresentar Coloração
             </RippleButton>
         </motion.div>
     );

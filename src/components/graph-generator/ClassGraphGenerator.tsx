@@ -38,7 +38,8 @@ export default function ClassGraphGenerator({
                     orientation: graphClassName === 'completes' ? 'color' : 'index',
                     show: false
                 },
-                active: true
+                active: true,
+                mode: "view"
             });
         }
 

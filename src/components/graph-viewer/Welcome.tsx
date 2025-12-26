@@ -9,7 +9,7 @@ export default function Welcome() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
         >
-            <GraphGenerator mode="classes">
+            <GraphGenerator graphMode="classes">
                 <div className="border bg-white cursor-pointer duration-200 hover:border-blue-500 hover:scale-105 flex flex-col gap-2 p-4 rounded-lg ease-in-out max-w-sm shadow-lg">
                     <h2 className="font-bold text-2xl">
                         Classes
@@ -21,7 +21,7 @@ export default function Welcome() {
                 </div>
             </GraphGenerator>
 
-            <GraphGenerator mode="free">
+            <GraphGenerator graphMode="free">
                 <div className="border bg-white cursor-pointer duration-200 hover:border-blue-500 hover:scale-105 flex flex-col gap-2 p-4 rounded-lg ease-in-out max-w-sm shadow-lg">
                     <h2 className="font-bold text-2xl">
                         Livre

@@ -49,7 +49,7 @@ const generateElements = (matrix: number[][]): ElementsDefinition => {
 };
 
 const createVertex = (event: EventObject, graph: Graph) => {
-    if (event.originalEvent.altKey && graph instanceof GraphFree) {
+    if (graph instanceof GraphFree) {
         const nodeData: TCNodeDataDefinition = {
             id: convertToElementId(graph.matrix.length),
             hasConflict: false,
@@ -66,45 +66,32 @@ const createVertex = (event: EventObject, graph: Graph) => {
 };
 
 const createEdge = (event: EventObject, graph: Graph) => {
-    const element: SingularElementArgument = event.target;
+    const cy = event.cy;
+    const nodesSelected = cy.nodes(':selected');
 
-    const keypressHandler = (kbEvent: KeyboardEvent) => {
-        const key = kbEvent.key;
-        const cy = event.cy;
-        const nodesSelected = cy.nodes(':selected');
+    if (nodesSelected.length === 2 && graph instanceof GraphFree) {
+        const sourceId = nodesSelected[0].id();
+        const targetId = nodesSelected[1].id();
+        const edgeId = `${sourceId}${targetId}`;
 
-        if ((key === 'e' || key === 'E') && nodesSelected.length === 2 && graph instanceof GraphFree) {
-            const sourceId = nodesSelected[0].id();
-            const targetId = nodesSelected[1].id();
-            const edgeId = `${sourceId}${targetId}`;
+        const edgedata: TCEdgeDataDefinition = {
+            id: edgeId,
+            source: sourceId,
+            target: targetId,
+            hasConflict: false,
+            elementColor: ''
+        };
 
-            const edgedata: TCEdgeDataDefinition = {
-                id: edgeId,
-                source: sourceId,
-                target: targetId,
-                hasConflict: false,
-                elementColor: ''
-            };
+        if (cy.$id(edgeId).length === 0) {
+            cy.add({
+                data: edgedata
+            });
 
-            if (cy.$id(edgeId).length === 0) {
-                cy.add({
-                    data: edgedata
-                });
-
-                graph.addEdge(convertToElementLabel(sourceId), convertToElementLabel(targetId));
-            }
-
-            nodesSelected.unselect();
+            graph.addEdge(convertToElementLabel(sourceId), convertToElementLabel(targetId));
         }
+
+        nodesSelected.unselect();
     }
-
-    window.addEventListener('keypress', keypressHandler);
-
-    element.off('unselect');
-
-    element.on('unselect', () => {
-        window.removeEventListener('keypress', keypressHandler);
-    });
 };
 
 const hexColorsCssClasses = HexadecimalColors.getAll().map((hexColor) => ({
@@ -188,7 +175,8 @@ const generateVisualization = (graph: Graph, graphView: GraphView, containerRef:
         ],
         layout: {
             name: graphView.layout || 'circle',
-        }
+        },
+        selectionType: "additive",
     });
 };
 

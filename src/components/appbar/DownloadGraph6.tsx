@@ -34,7 +34,8 @@ export default function DownloadGraph6() {
         >           
             <RippleButton variant={'outline'} onClick={download}>
                 {isDownloading ? <LoaderCircleIcon className="animate-spin" /> : <FileType2Icon />}
-                <span className="hidden lg:inline">Baixar em graph6</span>
+
+                Baixar em graph6
             </RippleButton>
         </motion.div>
     );

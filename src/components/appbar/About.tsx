@@ -9,7 +9,7 @@ export default function About() {
             <DialogTrigger asChild>
                 <RippleButton variant={'outline'}>
                     <InfoIcon />
-                    <span className="hidden lg:inline">Sobre</span>
+                    Sobre
                 </RippleButton>
             </DialogTrigger>
 

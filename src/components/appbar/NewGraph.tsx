@@ -18,7 +18,7 @@ export default function NewGraph() {
         >
             <RippleButton variant={'outline'} onClick={resetGraph}>
                 <PiGraph />
-                <span className="hidden lg:inline">Novo grafo</span>
+                Novo grafo
             </RippleButton>
         </motion.div>
     );

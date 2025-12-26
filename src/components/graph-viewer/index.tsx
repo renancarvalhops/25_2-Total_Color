@@ -7,7 +7,7 @@ import Welcome from "./Welcome";
 import ColoringPanel from "./InfoPanel";
 
 export default function GraphViewer() {
-    const { graph, graphView, graphRenderings } = useGraph();
+    const { graph, graphView, changeGraphViewMode, graphRenderings } = useGraph();
     const cyContainerRef = useRef<HTMLDivElement | null>(null);
     const [coloring, setColoring] = useState<Map<string, string[]>>(new Map());
     const [cytoscape, setCytoscape] = useState<Core>();
@@ -44,14 +44,43 @@ export default function GraphViewer() {
         if (graphRenderings > 0) {
             const cy = generateVisualization(graph, graphView, cyContainerRef);
 
-            cy.on('select', '*', (e) => assignElementColor(e, updateColor));
-            // cy.on('select', 'node', (e) => createEdge(e, graph));
-            cy.on('tap', (e) => createVertex(e, graph));
+            window.addEventListener("keypress", (e) => {
+                switch (e.key) {
+                    case "v":
+                        changeGraphViewMode("vertex");
+                        break;
+                    case "e":
+                        changeGraphViewMode("edge");
+                        break;
+                    case "c":
+                        changeGraphViewMode("coloring");
+                        break;
+                }
+            });
 
             setColoring(new Map());
             setCytoscape(cy);
         }
     }, [graphRenderings]);
+
+    useEffect(() => {
+        if (cytoscape) {
+            cytoscape.off("tap");
+            cytoscape.off("select");
+
+            switch (graphView.mode) {
+                case "vertex":
+                    cytoscape.on("tap", (e) => createVertex(e, graph));
+                    break;
+                case "edge":
+                    cytoscape.on("select", "node", (e) => createEdge(e, graph));
+                    break;
+                case "coloring":
+                    cytoscape.on("select", "*", (e) => assignElementColor(e, updateColor));
+                    break;
+            }
+        }
+    }, [graphView.mode]);
 
     useEffect(() => {
         if (cytoscape && graph.totalColoring && graphView.coloring?.show) {
@@ -69,7 +98,7 @@ export default function GraphViewer() {
         >
             {graphView.active ?
                 <>
-                    <div ref={cyContainerRef} className={`h-full w-full ${graphRenderings < 1 && 'hidden'}`}></div>
+                    <div ref={cyContainerRef} className="h-full w-full"></div>
 
                     <ColoringPanel
                         elementColors={Array.from(coloring.keys()).sort((a, b) => Number(a) - Number(b))}

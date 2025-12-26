@@ -1,4 +1,4 @@
-import { GraphView } from "@/types";
+import { GraphView, Modes } from "@/types";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type GraphContextType = {
@@ -7,19 +7,21 @@ type GraphContextType = {
     graphRenderings: number;
     initGraph: (newGraph: Graph, newGraphView: GraphView) => void;
     resetGraph: () => void;
+    changeGraphViewMode: (newMode: Modes) => void;
     viewColoring: () => void;  
 }
 
 const GraphContext = createContext<GraphContextType | null>(null);
 
-const defaultGraph = {
+const defaultGraph: Graph = {
     matrix: []
 };
 
-const defaultGraphView = {
+const defaultGraphView: GraphView = {
     layout: '',
     name: '',
-    active: false
+    active: false,
+    mode: "view"
 };
 
 export function GraphProvider({
@@ -38,6 +40,13 @@ export function GraphProvider({
     const resetGraph = () => {
         setGraph(defaultGraph);
         setGraphView(defaultGraphView);
+    };
+
+    const changeGraphViewMode = (newMode: Modes) => {
+        setGraphView((prev) => ({
+            ...prev,
+            mode: prev.mode === newMode ? "view" : newMode
+        }));
     };
 
     const viewColoring = () => {
@@ -63,6 +72,7 @@ export function GraphProvider({
             graphRenderings,
             initGraph,
             resetGraph,
+            changeGraphViewMode,
             viewColoring
         }}>
             {children}

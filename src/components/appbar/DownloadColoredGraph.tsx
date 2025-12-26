@@ -30,7 +30,8 @@ export default function DownloadColoredGraph() {
             >
                 <RippleButton variant={'outline'}>
                     {graph6File ? <DownloadIcon /> : <LoaderCircleIcon className="animate-spin" />}
-                    <span className="hidden lg:inline">Baixar grafo colorido</span>
+
+                    Baixar grafo colorido
                 </RippleButton>
             </a>
         </motion.div>

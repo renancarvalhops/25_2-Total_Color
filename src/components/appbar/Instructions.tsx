@@ -3,13 +3,19 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { RippleButton } from "../ui/shadcn-io/ripple-button";
 import { CgNotes } from "react-icons/cg";
 import { motion } from "motion/react";
+import { useGraph } from "@/contexts/GraphContext";
 
 export default function Instructions() {
+    const { graphView } = useGraph();
+
+    if (!graphView.active) {
+        return null;
+    }
+    
     return (
         <Dialog>
             <DialogTrigger asChild>
                 <motion.div
-                    className="lg:hidden"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1 }}

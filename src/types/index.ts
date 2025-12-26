@@ -1,6 +1,7 @@
 import { EdgeDataDefinition, NodeDataDefinition } from "cytoscape";
 
-export type Modes = "classes" | "free";
+export type GraphModes = "classes" | "free";
+export type Modes = "view" | "coloring" | "vertex" | "edge";
 export type GraphClassesNames = "completes" | "paths" | "cycles";
 export type AcceptedFileExtensions = "txt" | "g6";
 export type ColoringOrientation = "color" | "index";
@@ -13,6 +14,7 @@ export interface GraphView {
     layout: string;
     name: string;
     active: boolean;
+    mode: Modes;
 }
 
 export interface TCNodeDataDefinition extends NodeDataDefinition {
