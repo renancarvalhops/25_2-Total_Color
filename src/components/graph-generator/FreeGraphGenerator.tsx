@@ -80,10 +80,10 @@ export default function FreeGraphGenerator({
     };
 
     return (
-        <section>
+        <section className="overflow-x-hidden">
             {step === "form" && (
                 <form
-                    className="flex flex-col gap-4"
+                    className="flex flex-col gap-4 w-full"
                     onSubmit={handleSubmit}
                 >
                     <Button className="cursor-pointer bg-blue-500 hover:bg-blue-500">
@@ -222,7 +222,7 @@ export default function FreeGraphGenerator({
                     </div>
 
                     <div className="flex flex-col gap-8">
-                        <div className="flex gap-2">
+                        <div className="flex flex-col gap-2 md:flex-row">
                             <a
                                 href={"/examples/example-adj_matrix-m1.txt"}
                                 download
@@ -244,7 +244,7 @@ export default function FreeGraphGenerator({
                             </a>
                         </div>
 
-                        <div className="flex justify-between">
+                        <div className="flex flex-wrap gap-2 justify-between">
                             <Button className="cursor-pointer" variant={"secondary"} onClick={() => setStep("form")}>
                                 <ArrowLeftIcon />
                                 Voltar
@@ -313,7 +313,7 @@ export default function FreeGraphGenerator({
                             </a>
                         </div>
 
-                        <div className="flex justify-between">
+                        <div className="flex flex-wrap gap-2 justify-between">
                             <Button className="cursor-pointer" variant={"secondary"} onClick={() => setStep("adj_matrix")}>
                                 <ArrowLeftIcon />
                                 Instruções .txt (adjacências)
@@ -378,7 +378,7 @@ export default function FreeGraphGenerator({
                             </a>
                         </div>
 
-                        <div className="flex justify-between">
+                        <div className="flex flex-wrap gap-2 justify-between">
                             <Button className="cursor-pointer" variant={"secondary"} onClick={() => setStep("col_matrix")}>
                                 <ArrowLeftIcon />
                                 Instruções .txt (coloração)
