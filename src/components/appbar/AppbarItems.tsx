@@ -1,31 +1,74 @@
+import { MouseEventHandler } from "react";
 import About from "./About";
-import ButtonActionMode from "./ButtonMode";
+import ButtonActionMode from "./ButtonActionMode";
 import DownloadColoredGraph from "./DownloadColoredGraph";
 import DownloadGraph6 from "./DownloadGraph6";
 import Instructions from "./Instructions";
 import NewGraph from "./NewGraph";
 import ShowColoring from "./ShowColoring";
+import { useGraph } from "@/contexts/GraphContext";
+import FreeGraph from "@/lib/graphs/FreeGraph";
 
-export default function AppbarItems() {
+interface AppbarItemsProps {
+    onItemClick?: MouseEventHandler
+}
+
+export default function AppbarItems({
+    onItemClick = () => {}
+}: AppbarItemsProps) {
+    const { graph, graphView } = useGraph();
+
     return (
         <>
-            <Instructions />
+            {graphView.active && (
+                <div>
+                    <Instructions />
+                </div>
+            )}
 
-            <ShowColoring />
+            {graph.totalColoring && (
+                <div onClick={onItemClick}>
+                    <ShowColoring />
+                </div>
+            )}
 
-            <ButtonActionMode actionMode="vertex" text="Adicionar vértice (v)" />
+            {graphView.active && graph instanceof FreeGraph && (
+                <>
+                    <div onClick={onItemClick}>
+                        <ButtonActionMode actionMode="vertex" text="Adicionar vértice (v)" />
+                    </div>
 
-            <ButtonActionMode actionMode="edge" text="Adicionar aresta (e)" />
+                    <div onClick={onItemClick}>
+                        <ButtonActionMode actionMode="edge" text="Adicionar aresta (e)" />
+                    </div>
 
-            <ButtonActionMode actionMode="coloring" text="Atribuir cor (c)" />
+                    <div onClick={onItemClick}>
+                        <ButtonActionMode actionMode="coloring" text="Atribuir cor (c)" />
+                    </div>
+                </>
+            )}
 
-            <NewGraph />
+            {graphView.active && (
+                <div onClick={onItemClick}>
+                    <NewGraph />
+                </div>
+            )}
 
-            <DownloadColoredGraph />
+            {graphView.displayedColoring.size > 0 && (
+                <div onClick={onItemClick}>
+                    <DownloadColoredGraph />
+                </div>
+            )}
 
-            <DownloadGraph6 />
+            {graphView.active && (
+                <div onClick={onItemClick}>
+                    <DownloadGraph6 />
+                </div>
+            )}
 
-            <About />
-        </>
+            <div>
+                <About />
+            </div>
+        </>     
     );
 }

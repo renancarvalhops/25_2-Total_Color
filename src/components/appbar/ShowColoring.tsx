@@ -4,11 +4,7 @@ import { motion } from "motion/react";
 import { RippleButton } from "../ui/shadcn-io/ripple-button";
 
 export default function ShowColoring() {
-    const { graph, viewColoring } = useGraph();
-
-    if (!graph.totalColoring) {
-        return null;
-    }
+    const { viewColoring } = useGraph();
 
     return (
         <motion.div

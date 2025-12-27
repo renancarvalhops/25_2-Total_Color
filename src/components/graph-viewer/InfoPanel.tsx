@@ -6,7 +6,9 @@ import { PiHandTapLight } from "react-icons/pi";
 import { HiCursorClick } from "react-icons/hi";
 import { BsCircleFill } from "react-icons/bs";
 import { ActionMode } from "@/types";
-import { Color, GraphElement } from "@/lib/graphs/types";
+import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import { MinusIcon, PlusIcon } from "lucide-react";
 
 const modesConfig: Record<ActionMode, { title: string, instruction: string }> = {
     view: {
@@ -30,9 +32,16 @@ const modesConfig: Record<ActionMode, { title: string, instruction: string }> = 
 
 export default function InfoPanel() {
     const { graph, graphView } = useGraph();
+    const [showInstructions, setShowInstructions] = useState(true);
 
     const totalColoringByColor = getColoringByColor(graph.totalColoring || new Map());
     const displayedColoringByColor = getColoringByColor(graphView.displayedColoring);
+
+    useEffect(() => {
+        if (localStorage.getItem("hiddenInstructions")) {
+            setShowInstructions(false);
+        }
+    }, []);
 
     return (
         <motion.section
@@ -98,43 +107,57 @@ export default function InfoPanel() {
 
                     {graphView.actionMode !== "view" && (
                         <section className="flex flex-col gap-4">
-                            <div className="border-b-2 bg-gray-100 border-blue-500 font-semibold pl-2 px-4 py-2 rounded text-lg">
+                            <div className="border-b-2 bg-gray-100 border-blue-500 font-semibold flex justify-between items-center pl-2 px-4 py-2 rounded text-lg">
                                 Modo {modesConfig[graphView.actionMode].title}
+
+                                <Button
+                                    variant="outline"
+                                    size={"icon"}
+                                    onClick={() => {
+                                        localStorage.setItem("hiddenInstructions", String(!showInstructions));
+                                        setShowInstructions(!showInstructions);
+                                    }}
+                                >
+                                    {showInstructions ? <MinusIcon /> : <PlusIcon />}
+                                </Button>
                             </div>
 
-                            <div className="flex gap-2 items-center">
-                                <HiCursorClick className="hidden lg:flex" size={30} />
-                                <PiHandTapLight className="flex lg:hidden" size={30} />
-
-                                <p>
-                                    <span className="hidden lg:inline">Clique </span>
-                                    <span className="inline lg:hidden">Toque </span>
-                                    {modesConfig[graphView.actionMode].instruction}
-                                </p>
-                            </div>
-
-                            {graphView.actionMode === "coloring" && (
-                                <>
+                            {showInstructions && (
+                                <div>
                                     <div className="flex gap-2 items-center">
-                                        <HiCursorClick className="hidden lg:flex" size={60} />
-                                        <PiHandTapLight className="flex lg:hidden" size={35} />
+                                        <HiCursorClick className="hidden lg:flex" size={30} />
+                                        <PiHandTapLight className="flex lg:hidden" size={30} />
 
                                         <p>
-                                            <span>Em seguida, </span>
-                                            <span className="hidden lg:inline">clique </span>
-                                            <span className="inline lg:hidden">toque </span>
-                                            <span>em um espaço disponível <span className="hidden lg:inline">(ou pressione <kbd>Enter</kbd>)</span> para finalizar a atribuição da cor e permitir que o sistema valide sua corretude</span>
+                                            <span className="hidden lg:inline">Clique </span>
+                                            <span className="inline lg:hidden">Toque </span>
+                                            {modesConfig[graphView.actionMode].instruction}
                                         </p>
                                     </div>
 
-                                    <div className="flex gap-2 items-center">
-                                        <BsCircleFill className="text-red-700" size={30} />
+                                    {graphView.actionMode === "coloring" && (
+                                        <>
+                                            <div className="flex gap-2 items-center">
+                                                <HiCursorClick className="hidden lg:flex" size={60} />
+                                                <PiHandTapLight className="flex lg:hidden" size={35} />
 
-                                        <p>Caso haja conflito, o sistema preencherá todo o elemento de vermelho</p>
-                                    </div>
-                                </>
+                                                <p>
+                                                    <span>Em seguida, </span>
+                                                    <span className="hidden lg:inline">clique </span>
+                                                    <span className="inline lg:hidden">toque </span>
+                                                    <span>em um espaço disponível <span className="hidden lg:inline">(ou pressione <kbd>Enter</kbd>)</span> para finalizar a atribuição da cor e permitir que o sistema valide sua corretude</span>
+                                                </p>
+                                            </div>
+
+                                            <div className="flex gap-2 items-center">
+                                                <BsCircleFill className="text-red-700" size={30} />
+
+                                                <p>Caso haja conflito, o sistema preencherá todo o elemento de vermelho</p>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             )}
-
                         </section>
                     )}
                 </CardContent>

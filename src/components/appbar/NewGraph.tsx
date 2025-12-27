@@ -4,11 +4,7 @@ import { RippleButton } from "../ui/shadcn-io/ripple-button";
 import { PiGraph } from "react-icons/pi";
 
 export default function NewGraph() {
-    const { graphView, resetGraph } = useGraph();
-
-    if (!graphView.active) {
-        return null;
-    }
+    const { resetGraph } = useGraph();
 
     return (
         <motion.div

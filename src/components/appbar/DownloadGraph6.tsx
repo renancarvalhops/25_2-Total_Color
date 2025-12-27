@@ -22,10 +22,6 @@ export default function DownloadGraph6() {
         setIsDownloading(false);
     };
 
-    if (!graphView.active) {
-        return null;
-    }
-
     return (
         <motion.div
             initial={{ opacity: 0 }}

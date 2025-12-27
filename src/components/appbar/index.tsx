@@ -3,9 +3,11 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, Dr
 import { Button } from "../ui/button";
 import { MenuIcon } from "lucide-react";
 import AppbarItems from "./AppbarItems";
+import { useState } from "react";
 
 export default function AppBar() {
     const title = "Total-Color";
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     return (
         <menu className="bg-blue-500 flex gap-4 items-center justify-between px-12 py-4 relative shadow">
@@ -26,7 +28,7 @@ export default function AppBar() {
                 <AppbarItems />
             </div>
 
-            <Drawer direction="right">
+            <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} direction="right">
                 <DrawerTrigger asChild>
                     <Button className="inline xl:hidden" variant="outline">
                         <MenuIcon />
@@ -40,7 +42,7 @@ export default function AppBar() {
                         </DrawerHeader>
 
                         <div className="flex flex-col gap-4 p-4">
-                            <AppbarItems />
+                            <AppbarItems onItemClick={() => setMobileMenuOpen(false)} />
                         </div>
                     </div>
                 </DrawerContent>

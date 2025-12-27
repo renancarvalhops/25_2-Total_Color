@@ -14,16 +14,11 @@ const onlyDesktop = "gap-2 hidden items-center lg:flex";
 const bothDevices = "flex gap-2 items-center";
 
 export default function Instructions() {
-    const { graphView } = useGraph();
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         setIsOpen(!localStorage.getItem("hasUsedApp"));
     }, []);
-
-    if (!graphView.active) {
-        return null;
-    }
     
     return (
         <Dialog

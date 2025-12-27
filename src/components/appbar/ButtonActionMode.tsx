@@ -14,11 +14,7 @@ export default function ButtonActionMode({
     actionMode,
     text
 }: ButtonActionModeProps) {
-    const { graph, graphView, changeGraphViewMode } = useGraph();
-
-    if (!graphView.active || !(graph instanceof FreeGraph)) {
-        return null;
-    }
+    const { graphView, changeGraphViewMode } = useGraph();
 
     return (
         <motion.div

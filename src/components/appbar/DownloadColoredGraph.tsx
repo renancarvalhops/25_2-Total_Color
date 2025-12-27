@@ -38,10 +38,6 @@ export default function DownloadColoredGraph() {
         a.click();
     };
 
-    if (graphView.displayedColoring.size === 0) {
-        return null;
-    }
-
     return (
         <motion.div
             initial={{ opacity: 0 }}
