@@ -48,7 +48,7 @@ export default function DownloadColoredGraph() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
         >           
-            <RippleButton variant={'outline'} onClick={download}>
+            <RippleButton className="w-full" variant={'outline'} onClick={download}>
                 {true ? <DownloadIcon /> : <LoaderCircleIcon className="animate-spin" />}
 
                 Baixar grafo com coloração

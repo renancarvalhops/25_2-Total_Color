@@ -1,17 +1,14 @@
 import { HexadecimalColors } from "../graph-viewer/ViewerUtils";
-import About from "./About";
-import DownloadGraph6 from "./DownloadGraph6";
-import Instructions from "./Instructions";
-import NewGraph from "./NewGraph";
-import ShowColoring from "./ShowColoring";
-import ButtonMode from "./ButtonMode";
-import DownloadColoredGraph from "./DownloadColoredGraph";
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "../ui/drawer";
+import { Button } from "../ui/button";
+import { MenuIcon } from "lucide-react";
+import AppbarItems from "./AppbarItems";
 
 export default function AppBar() {
     const title = "Total-Color";
 
     return (
-        <menu className="bg-blue-500 flex flex-col gap-4 items-center justify-between lg:flex-row px-12 py-4 relative shadow">
+        <menu className="bg-blue-500 flex gap-4 items-center justify-between px-12 py-4 relative shadow">
 
             <h2 className="flex gap-[0.1rem] select-none text-2xl text-white">
                 {title.split("").map((char, index) => (
@@ -25,25 +22,29 @@ export default function AppBar() {
                 ))}
             </h2>
 
-            <div className="flex flex-wrap gap-2">
-                <Instructions />
-                
-                <ShowColoring />
-
-                <ButtonMode actionMode="vertex" text="Adicionar vértice (v)" />
-
-                <ButtonMode actionMode="edge" text="Adicionar aresta (e)" />
-
-                <ButtonMode actionMode="coloring" text="Atribuir cor (c)" />
-
-                <NewGraph />
-
-                <DownloadColoredGraph />
-
-                <DownloadGraph6 />
-
-                <About />
+            <div className="hidden xl:flex flex-wrap gap-2">
+                <AppbarItems />
             </div>
+
+            <Drawer direction="right">
+                <DrawerTrigger asChild>
+                    <Button className="inline xl:hidden" variant="outline">
+                        <MenuIcon />
+                    </Button>
+                </DrawerTrigger>
+                <DrawerContent>
+                    <div className="bg-gray-200 flex flex-col h-full w-full">
+                        <DrawerHeader>
+                            <DrawerTitle>Menu</DrawerTitle>
+                            <DrawerDescription></DrawerDescription>
+                        </DrawerHeader>
+
+                        <div className="flex flex-col gap-4 p-4">
+                            <AppbarItems />
+                        </div>
+                    </div>
+                </DrawerContent>
+            </Drawer>
 
         </menu>
     );

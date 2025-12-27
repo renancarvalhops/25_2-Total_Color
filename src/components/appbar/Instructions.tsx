@@ -42,7 +42,7 @@ export default function Instructions() {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1 }}
                 >   
-                    <RippleButton variant={'outline'}>
+                    <RippleButton variant={'outline'} className="w-full">
                         <CgNotes />
                         <span>Instruções</span>
                     </RippleButton>

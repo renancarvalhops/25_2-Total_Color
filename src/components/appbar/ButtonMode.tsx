@@ -29,6 +29,7 @@ export default function ButtonActionMode({
             <RippleButton
                 variant={'outline'}
                 className={`
+                    w-full
                     ${graphView.actionMode === actionMode &&
                     "border-amber-500 bg-amber-500 hover:bg-amber-500 hover:text-white text-white"}`
                 }

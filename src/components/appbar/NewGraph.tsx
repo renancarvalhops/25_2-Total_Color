@@ -16,7 +16,7 @@ export default function NewGraph() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
         >
-            <RippleButton variant={'outline'} onClick={resetGraph}>
+            <RippleButton className="w-full" variant={'outline'} onClick={resetGraph}>
                 <PiGraph />
                 Novo grafo
             </RippleButton>

@@ -32,7 +32,7 @@ export default function DownloadGraph6() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
         >           
-            <RippleButton variant={'outline'} onClick={download}>
+            <RippleButton className="w-full" variant={'outline'} onClick={download}>
                 {isDownloading ? <LoaderCircleIcon className="animate-spin" /> : <FileType2Icon />}
 
                 Baixar em graph6
