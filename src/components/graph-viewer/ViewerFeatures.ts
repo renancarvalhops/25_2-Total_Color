@@ -1,6 +1,6 @@
 import { GraphView, TCEdgeDataDefinition, TCNodeDataDefinition } from "@/types";
 import cytoscape, { Collection, Core, ElementsDefinition, EventObject, SingularElementArgument } from "cytoscape";
-import { RefObject } from "react";
+import { ChangeEvent, RefObject } from "react";
 import { convertToCyElementId, convertToElementId, HexadecimalColors } from "./ViewerUtils";
 import GraphFree from "@/lib/graphs/FreeGraph";
 import Graph from "@/lib/graphs/Graph";
@@ -223,33 +223,34 @@ const showColoringValidation = (element: SingularElementArgument) => {
 
 const assignElementColor = (event: EventObject, updateDisplayedColoring: (cyElementId: string, color: string) => void) => {
     const element: SingularElementArgument = event.target;
-    let isFirstKeyDown = true;
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-        const key = event.key;
-        const isNumber = /\d/g;
-
-        if (isNumber.test(key)) {
-            if (isFirstKeyDown) {
-                isFirstKeyDown = false;
-
-                element.data('elementColor', key);
-            } else {
-                element.data('elementColor', element.data('elementColor') + key);
+    const inputID = "assign_aux";
+    const input = document.getElementById(inputID);
+    if (!input) {
+        const newInput = document.createElement("input");
+        newInput.id = inputID;
+        newInput.type = "number";
+        newInput.style.position = "absolute";
+        newInput.style.top = "-100px";
+        newInput.style.opacity = "0";
+        newInput.addEventListener("input", () => {
+            event.cy.$(":selected").forEach((el) => {
+                el.data("elementColor", newInput.value);
+                el.style('label', element.data('elementColor'));
+            });
+        });
+        newInput.addEventListener("keyup", (e) => {
+            if (e.key === "Enter") {
+                event.cy.$(":selected").unselect();
             }
-
-            element.style('label', element.data('elementColor'));
-        } else if (key === 'Backspace') {
-            const elementColor = element.data('elementColor');
-
-            element.data('elementColor', elementColor.substring(0, elementColor.length - 1));
-            element.style('label', element.data('elementColor'));
-        } else if (key === 'Enter') {
-            element.unselect();
-        }
+        });
+        document.body.appendChild(newInput);
+        newInput.focus();
+        newInput.click();
+    } else {
+        input.focus();
+        input.click();
     }
-
-    window.addEventListener('keydown', handleKeyDown);
 
     element.off('unselect');
 
@@ -265,7 +266,10 @@ const assignElementColor = (event: EventObject, updateDisplayedColoring: (cyElem
 
         updateDisplayedColoring(elementId, currentColor);
 
-        window.removeEventListener('keydown', handleKeyDown);
+        const input = document.getElementById(inputID);
+        if (input) {
+            input.remove();
+        }
 
         showColoringValidation(element);
     });
