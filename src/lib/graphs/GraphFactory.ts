@@ -1,17 +1,17 @@
-import { AcceptedFileExtensions, GraphClassesNames } from "@/types";
+import { AcceptedFile, GraphClassName } from "@/types";
 import PathGraph from "./classes/PathGraph";
 import CycleGraph from "./classes/CycleGraph";
 import CompleteGraph from "./classes/CompleteGraph";
 import FreeGraph from "./FreeGraph";
-import { Graph } from "./Graph";
+import Graph from "./Graph";
 
 interface MakeArguments {
     graphClass?: {
-        name: GraphClassesNames,
+        name: GraphClassName,
         order: number
     },
     graphFree?: {
-        fileExtension: AcceptedFileExtensions,
+        fileExtension: AcceptedFile,
         content: string,
         isColored: boolean
     } | null

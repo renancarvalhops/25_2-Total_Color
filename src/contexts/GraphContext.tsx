@@ -1,5 +1,7 @@
-import { Graph } from "@/lib/graphs/Graph";
-import { GraphView, Modes } from "@/types";
+import { convertToElementId } from "@/components/graph-viewer/ViewerUtils";
+import Graph from "@/lib/graphs/Graph";
+import { GraphElement } from "@/lib/graphs/types";
+import { GraphView, ActionMode } from "@/types";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type GraphContextType = {
@@ -8,8 +10,9 @@ type GraphContextType = {
     graphRenderings: number;
     initGraph: (newGraph: Graph, newGraphView: GraphView) => void;
     resetGraph: () => void;
-    changeGraphViewMode: (newMode: Modes) => void;
-    viewColoring: () => void;  
+    changeGraphViewMode: (newActionMode: ActionMode) => void;
+    viewColoring: () => void;
+    updateDisplayedColoring: (cyElementId: string, color: string) => void;
 }
 
 const GraphContext = createContext<GraphContextType | null>(null);
@@ -22,7 +25,8 @@ const defaultGraphView: GraphView = {
     layout: '',
     name: '',
     active: false,
-    mode: "view"
+    actionMode: "view",
+    displayedColoring: new Map()
 };
 
 export function GraphProvider({
@@ -43,26 +47,36 @@ export function GraphProvider({
         setGraphView(defaultGraphView);
     };
 
-    const changeGraphViewMode = (newMode: Modes) => {
+    const changeGraphViewMode = (newActionMode: ActionMode) => {
         setGraphView((prev) => ({
             ...prev,
-            mode: prev.mode === newMode ? "view" : newMode
+            actionMode: prev.actionMode === newActionMode ? "view" : newActionMode
         }));
     };
 
     const viewColoring = () => {
+        setGraphView((prev) => ({
+            ...prev,
+            showColoring: true
+        }));
+    };
+
+    const updateDisplayedColoring = (cyElementId: string, color: string) => {
         setGraphView((prev) => {
-            if (prev.coloring) {
-                return {
-                    ...prev,
-                    coloring: {
-                        orientation: prev.coloring.orientation,
-                        show: true
-                    }
-                }
-            } else {
-                return prev;
+            const elementId: GraphElement = convertToElementId(cyElementId);
+            const newDisplayedColoring = new Map(prev.displayedColoring);
+            const icolor = Number.parseInt(color);
+
+            if (icolor) {
+                newDisplayedColoring.set(elementId, `${icolor}`);
+            } else if (newDisplayedColoring.has(elementId)) {
+                newDisplayedColoring.delete(elementId);
             }
+
+            return ({
+                ...prev,
+                displayedColoring: newDisplayedColoring
+            });
         });
     };
 
@@ -74,7 +88,8 @@ export function GraphProvider({
             initGraph,
             resetGraph,
             changeGraphViewMode,
-            viewColoring
+            viewColoring,
+            updateDisplayedColoring,
         }}>
             {children}
         </GraphContext.Provider>

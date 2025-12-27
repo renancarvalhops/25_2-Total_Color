@@ -1,9 +1,9 @@
 import { GraphView, TCEdgeDataDefinition, TCNodeDataDefinition } from "@/types";
 import cytoscape, { Collection, Core, ElementsDefinition, EventObject, SingularElementArgument } from "cytoscape";
 import { RefObject } from "react";
-import { convertToElementId, convertToElementLabel, HexadecimalColors } from "./ViewerUtils";
+import { convertToCyElementId, convertToElementId, HexadecimalColors } from "./ViewerUtils";
 import GraphFree from "@/lib/graphs/FreeGraph";
-import { Graph } from "@/lib/graphs/Graph";
+import Graph from "@/lib/graphs/Graph";
 
 type ValidatedTotalColoring = {
     hasConflict: boolean,
@@ -52,7 +52,7 @@ const generateElements = (matrix: number[][]): ElementsDefinition => {
 const createVertex = (event: EventObject, graph: Graph) => {
     if (graph instanceof GraphFree) {
         const nodeData: TCNodeDataDefinition = {
-            id: convertToElementId(graph.matrix.length),
+            id: convertToCyElementId(`${graph.matrix.length}`),
             hasConflict: false,
             elementColor: ''
         };
@@ -88,7 +88,7 @@ const createEdge = (event: EventObject, graph: Graph) => {
                 data: edgedata
             });
 
-            graph.addEdge(convertToElementLabel(sourceId), convertToElementLabel(targetId));
+            graph.addEdge(Number(convertToElementId(sourceId)), Number(convertToElementId(targetId)));
         }
 
         nodesSelected.unselect();
@@ -221,10 +221,9 @@ const showColoringValidation = (element: SingularElementArgument) => {
     });
 };
 
-const assignElementColor = (event: EventObject, updateColor: (elementId: string, previousColor: string, currentColor: string) => void) => {
+const assignElementColor = (event: EventObject, updateDisplayedColoring: (cyElementId: string, color: string) => void) => {
     const element: SingularElementArgument = event.target;
     let isFirstKeyDown = true;
-    const previousColor = element.data('elementColor');
 
     const handleKeyDown = (event: KeyboardEvent) => {
         const key = event.key;
@@ -264,7 +263,7 @@ const assignElementColor = (event: EventObject, updateColor: (elementId: string,
             element.addClass(HexadecimalColors.getWithoutHash(Number(currentColor) - 1));
         }
 
-        updateColor(elementId, previousColor, currentColor);
+        updateDisplayedColoring(elementId, currentColor);
 
         window.removeEventListener('keydown', handleKeyDown);
 
@@ -272,40 +271,10 @@ const assignElementColor = (event: EventObject, updateColor: (elementId: string,
     });
 };
 
-const showColoring = (
-    cy: Core,
-    graph: Graph,
-    graphView: GraphView,
-    updateColor: (elementId: string, previousColor: string, currentColor: string) => void
-) => {
-    if (!graphView.coloring || !graph.totalColoring) {
-        return;
-    }
+const showColoring = (cy: Core, graph: Graph, updateDisplayedColoring: (cyElementId: string, color: string) => void) => {
+    if (!graph.totalColoring) return;
 
-    const coloring: { color: number, elementLabel: string }[] = [];
-
-    if (graphView.coloring.orientation === 'color') {
-        graph.totalColoring.forEach((elementsLabels, color) => {
-            elementsLabels.forEach((elementLabel) => {
-                coloring.push({ color, elementLabel });
-            });
-        });
-    } else if (graphView.coloring.orientation === 'index') {
-        const maxElementsLabels = graph.totalColoring.reduce((prev, curr) => (
-            prev.length > curr.length ? prev : curr
-        ));
-
-        const maxElementIndex = maxElementsLabels.length - 1;
-        const maxColorIndex = graph.totalColoring.length - 1;
-
-        for (let elementIndex = 0; elementIndex <= maxElementIndex; elementIndex++) {
-            for (let colorIndex = 0; colorIndex <= maxColorIndex; colorIndex++) {
-                if (elementIndex < graph.totalColoring[colorIndex].length) {
-                    coloring.push({ color: colorIndex, elementLabel: graph.totalColoring[colorIndex][elementIndex] });
-                }
-            }
-        }
-    }
+    const coloring = Array.from(graph.totalColoring);
 
     let index = 0;
 
@@ -315,21 +284,19 @@ const showColoring = (
             return;
         }
 
-        const { color, elementLabel } = coloring[index];
+        const [elementId, color] = coloring[index];
+        const icolor = Number(color);
+        const cyElement = cy.$id(convertToCyElementId(elementId));
 
-        const element = cy.$id(convertToElementId(elementLabel));
-        const previousColor = element.data('elementColor');
-        const currentColor = String(color + 1);
+        cyElement.data('elementColor', String(icolor + 1));
+        cyElement.style('label', cyElement.data('elementColor'));
+        cyElement.classes('');
+        cyElement.addClass(HexadecimalColors.getWithoutHash(icolor));
 
-        element.data('elementColor', currentColor);
-        element.style('label', element.data('elementColor'));
-        element.classes('');
-        element.addClass(HexadecimalColors.getWithoutHash(color));
-
-        updateColor(element.data('id'), previousColor, currentColor);
+        updateDisplayedColoring(cyElement.data('id'), String(icolor + 1));
 
         index++;
-    }, 1500);
+    }, 1000);
 
     return intervalId;
 };

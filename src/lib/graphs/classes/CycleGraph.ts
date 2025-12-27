@@ -1,52 +1,53 @@
+import { mod } from "@/lib/utils";
+import { AdjacencyMatrix, Color, Coloring, Edge, Vertex } from "../types";
 import { GraphClass } from "./GraphClass";
 
 export default class CycleGraph extends GraphClass {
-    constructor(order: number) {
-        super(order);
+    constructor(n: number) {
+        super(n);
     }
 
-    getMatrix(order: number): number[][] {
-        const matrix = Array.from({ length: order }, () => Array(order).fill(0));
+    getMatrix(n: number): AdjacencyMatrix {
+        const matrix: AdjacencyMatrix = Array.from({ length: n }, () => Array(n).fill(0));
 
-        for (let i = 0; i < order - 1; i++) {
+        for (let i = 0; i < n - 1; i++) {
             matrix[i][i + 1] = 1;
         }
 
-        matrix[0][order - 1] = 1;
+        matrix[0][n - 1] = 1;
 
         return matrix;
     }
 
-    getTotalColoring(order: number): string[][] {
-        const R = order % 3;
-        const totalChromaticNumber = R === 0 ? 3 : 4;
-        const coloring = Array.from({ length: totalChromaticNumber }, () => Array<string>());
-
-        if (R % 2 === 0) {
-            let i = 0;
-            for (; i < 2 * order - 1; i++) {
-                if (i % 2 === 0) {
-                    coloring[i % 3].push(`${i / 2}`);
-                } else {
-                    coloring[i % 3].push(`${(i - 1) / 2}_${(i + 1) / 2}`);
-                }
-            }
-
-            coloring[R === 0 ? (i % 3) : 3].push(`0_${(i - 1) / 2}`);            
-        } else {
-            let i = 0;
-            for (; i < 2 * order - 1; i++) {
-                if (i % 2 === 0) {
-                    coloring[i % 4].push(`${i / 2}`);
-                } else {
-                    coloring[i % 4].push(`${(i - 1) / 2}_${(i + 1) / 2}`);
-                }
-            }
+    getTotalColoring(n: number): Coloring {
+        const coloring: Coloring = new Map();
     
-            coloring[i % 4].push(`0_${(i - 1) / 2}`);
+        let i = 0;
+        for (i; i < 2*n - 1; i++) {
+            const c: Color = `${i % 3}`;
+
+            if (i % 2 === 0) {
+                const v: Vertex = `${i / 2}`;
+                coloring.set(v, c);
+            } else {
+                const e: Edge = `${(i - 1) / 2} ${(i + 1) / 2}`;
+                coloring.set(e, c);
+            }
         }
+        const c: Color = `${i % 3}`;
+        const e: Edge = `0 ${(i - 1) / 2}`;
+        coloring.set(e, c);
 
 
+        if (mod(n, 3) === 1) {
+            coloring.set(`${n - 2}`, "3");
+            coloring.set(`${n - 2} ${n - 1}`, "1");
+            coloring.set(`${n - 1}`, "2");
+            coloring.set(`0 ${n - 1}`, "3");
+        } else if (mod(n, 3) === 2) {
+            coloring.set(`0 ${n - 1}`, "3");
+        }
+    
         return coloring;
     }
 }

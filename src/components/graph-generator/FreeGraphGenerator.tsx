@@ -2,7 +2,7 @@ import { FormEventHandler, useState } from "react";
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "../ui/shadcn-io/dropzone";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useGraph } from "@/contexts/GraphContext";
-import { AcceptedFileExtensions } from "@/types";
+import { AcceptedFile } from "@/types";
 import { layouts } from ".";
 import GraphFactory from "@/lib/graphs/GraphFactory";
 import { ArrowLeftIcon, ArrowRightIcon, DownloadIcon, FileDownIcon, InfoIcon } from "lucide-react";
@@ -11,7 +11,7 @@ import Image from "next/image";
 
 
 interface GraphFreeOptions {
-    fileExtension: AcceptedFileExtensions,
+    fileExtension: AcceptedFile,
     content: string
 }
 
@@ -71,14 +71,11 @@ export default function FreeGraphGenerator({
         initGraph(graph, {
             layout,
             name: graphFile ? graphFile.name : 'free-graph',
-            coloring: {
-                orientation: 'color',
-                show: false
-            },
             active: true,
-            mode: "view"
+            actionMode: "view",
+            displayedColoring: new Map(),
         });
-        
+
         closeDialog();
     };
 
@@ -181,7 +178,7 @@ export default function FreeGraphGenerator({
                             Gerar um grafo a partir de um arquivo
                         </Button>
                     }
-                </form>   
+                </form>
             )}
 
             {step === "adj_matrix" && (
@@ -363,7 +360,7 @@ export default function FreeGraphGenerator({
                             />
 
                         </div>
-                        
+
                         <p><strong>Observação:</strong> nesse sistema é possível exportar qualquer grafo para o formato <code>.g6</code>.</p>
 
                     </div>

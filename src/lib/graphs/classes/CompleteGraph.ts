@@ -1,16 +1,17 @@
 import { mod } from "@/lib/utils";
 import { GraphClass } from "./GraphClass";
+import { AdjacencyMatrix, Color, Coloring, Edge, Vertex } from "../types";
 
 export default class CompleteGraph extends GraphClass {
-    constructor(order: number) {
-        super(order);
+    constructor(n: number) {
+        super(n);
     }
 
-    getMatrix(order: number): number[][] {
-        const matrix = Array.from({ length: order }, () => Array(order).fill(0));
+    getMatrix(n: number): AdjacencyMatrix {
+        const matrix: AdjacencyMatrix = Array.from({ length: n }, () => Array(n).fill(0));
 
-        for (let i = 0; i < order; i++) {
-            for (let j = i + 1; j < order; j++) {
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
                 matrix[i][j] = 1;
             }
         }
@@ -18,37 +19,35 @@ export default class CompleteGraph extends GraphClass {
         return matrix;
     }
 
-    getTotalColoring(order: number): string[][] {
-        const isOdd = order % 2 === 1;
-        const totalChromaticNumber = order + (isOdd ? 0 : 1);
-        const coloring = Array.from({ length: totalChromaticNumber }, () => Array<string>());
+    getTotalColoring(n: number): Coloring {
+        const isEven = mod(n, 2) === 0;
+        const totalChromaticNumber = n + (isEven ? 1 : 0);
+        const coloring: Coloring = new Map();
 
-        if (isOdd) {
-            for (let i = 0; i < totalChromaticNumber; i++) {
-                coloring[i].push(`${i}`);
+        for (let i = 0; i < totalChromaticNumber; i++) {
+            const v: Vertex = `${i}`;
+            const c: Color = `${i}`;
 
-                for (let j = 1; j <= (order - 1) / 2; j++) {
-                    const leftIndex = mod(i - j, order);
-                    const rightIndex = mod(i + j, order);
+            coloring.set(v, c);
 
-                    coloring[i].push(`${Math.min(leftIndex, rightIndex)}_${Math.max(leftIndex, rightIndex)}`);
-                }
+            for (let j = 1; j <= (totalChromaticNumber - 1) / 2; j++) {
+                const leftIndex = mod(i - j, totalChromaticNumber);
+                const rightIndex = mod(i + j, totalChromaticNumber);
+
+                const e: Edge = `${Math.min(leftIndex, rightIndex)} ${Math.max(leftIndex, rightIndex)}`;
+
+                coloring.set(e, c);
             }
-        } else {
-            for (let i = 0; i < totalChromaticNumber; i++) {
-                if (i != 0) {
-                    coloring[i].push(`${i - 1}`);
-                }
+        }
 
-                for (let j = 1; j <= order / 2; j++) {
-                    const leftIndex = mod(i - j, order + 1);
-                    const rightIndex = mod(i + j, order + 1);
+        if (isEven) {
+            const aux_index = totalChromaticNumber - 1;
+            const aux_v: Vertex = `${aux_index}`;
+            coloring.delete(aux_v);
 
-                    if (leftIndex !== 0 && rightIndex !== 0) {
-                        coloring[i].push(`${Math.min(leftIndex, rightIndex) - 1}_${Math.max(leftIndex, rightIndex) - 1}`);
-                    }
-
-                }
+            for (let i = 0; i < aux_index; i++) {
+                const aux_e: Edge = `${i} ${aux_index}`;
+                coloring.delete(aux_e);
             }
         }
 

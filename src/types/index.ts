@@ -1,20 +1,18 @@
+import { Coloring } from "@/lib/graphs/types";
 import { EdgeDataDefinition, NodeDataDefinition } from "cytoscape";
 
-export type GraphModes = "classes" | "free";
-export type Modes = "view" | "coloring" | "vertex" | "edge";
-export type GraphClassesNames = "completes" | "paths" | "cycles";
-export type AcceptedFileExtensions = "txt" | "g6";
-export type ColoringOrientation = "color" | "index";
+export type GraphMode = "classes" | "free";
+export type ActionMode = "view" | "coloring" | "vertex" | "edge";
+export type GraphClassName = "completes" | "paths" | "cycles";
+export type AcceptedFile = "txt" | "g6";
 
 export interface GraphView {
-    coloring?: {
-        show: boolean;
-        orientation: ColoringOrientation;
-    };
+    showColoring?: boolean;
+    displayedColoring: Coloring;
     layout: string;
     name: string;
     active: boolean;
-    mode: Modes;
+    actionMode: ActionMode;
 }
 
 export interface TCNodeDataDefinition extends NodeDataDefinition {

@@ -5,6 +5,7 @@ import Instructions from "./Instructions";
 import NewGraph from "./NewGraph";
 import ShowColoring from "./ShowColoring";
 import ButtonMode from "./ButtonMode";
+import DownloadColoredGraph from "./DownloadColoredGraph";
 
 export default function AppBar() {
     const title = "Total-Color";
@@ -29,15 +30,15 @@ export default function AppBar() {
                 
                 <ShowColoring />
 
-                <ButtonMode mode="vertex" text="Adicionar vértice (v)" />
+                <ButtonMode actionMode="vertex" text="Adicionar vértice (v)" />
 
-                <ButtonMode mode="edge" text="Adicionar aresta (e)" />
+                <ButtonMode actionMode="edge" text="Adicionar aresta (e)" />
 
-                <ButtonMode mode="coloring" text="Atribuir cor (c)" />
+                <ButtonMode actionMode="coloring" text="Atribuir cor (c)" />
 
                 <NewGraph />
 
-                {/* <DownloadColoredGraph /> */}
+                <DownloadColoredGraph />
 
                 <DownloadGraph6 />
 

@@ -1,3 +1,4 @@
+import { Color, Coloring, GraphElement } from "@/lib/graphs/types";
 import { mod } from "@/lib/utils";
 
 class HexadecimalColors {
@@ -31,18 +32,42 @@ class HexadecimalColors {
     }
 }
 
-const convertToElementId = (elementLabel: string | number): string => {
-    const labelParts = String(elementLabel).split('_');
+const convertToCyElementId = (element: GraphElement): string => {
+    const parts = element.split(" ");
 
-    const elementId = labelParts.length === 2 ?
-        `v${Number(labelParts[0]) + 1}v${Number(labelParts[1]) + 1}` :
-        `v${Number(labelParts[0]) + 1}`;
+    const cyElementId = parts.length === 2 ?
+        `v${Number(parts[0]) + 1}v${Number(parts[1]) + 1}` :
+        `v${Number(parts[0]) + 1}`;
 
-    return elementId;
+    return cyElementId;
 };
 
-const convertToElementLabel = (elementId: string): number => {
-    return Number.parseInt(elementId.replace('v', '')) - 1;
+const convertToElementId = (cyElementId: string): GraphElement => {
+    const parts = cyElementId.replace("v", "").split("v");
+
+    const elementId: GraphElement = parts.length === 2 ?
+        `${Number(parts[0]) - 1} ${Number(parts[1]) - 1}` :
+        `${Number(parts[0]) - 1}`;
+
+    return elementId;
 }
 
-export { HexadecimalColors, convertToElementId, convertToElementLabel }
+const getColoringByColor = (coloring: Coloring): Map<Color, GraphElement[]> => {
+    const coloringByColor: Map<Color, GraphElement[]> = new Map();
+
+    coloring.entries().forEach(([element, color]) => {
+        const colorElements = coloringByColor.get(color);
+        let newColorElements: GraphElement[] = [];
+
+        if (colorElements) {
+            newColorElements = [...colorElements];
+        }
+        
+        newColorElements.push(element);
+        coloringByColor.set(color, newColorElements);
+    });
+
+    return coloringByColor;
+}
+
+export { HexadecimalColors, convertToCyElementId, convertToElementId, getColoringByColor }

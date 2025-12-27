@@ -1,19 +1,19 @@
 import { RippleButton } from "@/components/ui/shadcn-io/ripple-button";
 import { useGraph } from "@/contexts/GraphContext";
 import FreeGraph from "@/lib/graphs/FreeGraph";
-import { Modes } from "@/types";
+import { ActionMode } from "@/types";
 import { PlusIcon } from "lucide-react";
 import { motion } from "motion/react";
 
-interface ButtonModeProps {
-    mode: Modes,
+interface ButtonActionModeProps {
+    actionMode: ActionMode,
     text: string
 }
 
-export default function ButtonMode({
-    mode,
+export default function ButtonActionMode({
+    actionMode,
     text
-}: ButtonModeProps) {
+}: ButtonActionModeProps) {
     const { graph, graphView, changeGraphViewMode } = useGraph();
 
     if (!graphView.active || !(graph instanceof FreeGraph)) {
@@ -29,10 +29,10 @@ export default function ButtonMode({
             <RippleButton
                 variant={'outline'}
                 className={`
-                    ${graphView.mode === mode &&
+                    ${graphView.actionMode === actionMode &&
                     "border-amber-500 bg-amber-500 hover:bg-amber-500 hover:text-white text-white"}`
                 }
-                onClick={() => changeGraphViewMode(mode)}
+                onClick={() => changeGraphViewMode(actionMode)}
             >
                 <PlusIcon />
 

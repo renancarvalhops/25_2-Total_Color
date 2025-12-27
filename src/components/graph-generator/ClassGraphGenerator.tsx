@@ -5,8 +5,8 @@ import { Input } from "../ui/input";
 import { useGraph } from "@/contexts/GraphContext";
 import { layouts } from ".";
 import GraphFactory from "@/lib/graphs/GraphFactory";
-import { GraphClassesNames } from "@/types";
-import { RippleButton } from "../ui/shadcn-io/ripple-button";
+import { GraphClassName } from "@/types";
+import { Button } from "../ui/button";
 
 interface ClassGraphGeneratorProps {
     closeDialog: () => void
@@ -16,7 +16,7 @@ export default function ClassGraphGenerator({
     closeDialog
 }: ClassGraphGeneratorProps) {
     const { initGraph } = useGraph();
-    const [graphClassName, setGraphClassName] = useState<GraphClassesNames>();
+    const [graphClassName, setGraphClassName] = useState<GraphClassName>();
     const [order, setOrder] = useState('3');
     const [layout, setLayout] = useState('');
 
@@ -34,12 +34,9 @@ export default function ClassGraphGenerator({
             initGraph(graph, {
                 layout,
                 name: `${graphClassName}-${order}`,
-                coloring: {
-                    orientation: graphClassName === 'completes' ? 'color' : 'index',
-                    show: false
-                },
                 active: true,
-                mode: "view"
+                actionMode: "view",
+                displayedColoring: new Map(),
             });
         }
 
@@ -59,7 +56,7 @@ export default function ClassGraphGenerator({
                 <div className="flex gap-4">
                     <Select
                         value={graphClassName}
-                        onValueChange={(value: GraphClassesNames) => {
+                        onValueChange={(value: GraphClassName) => {
                             setGraphClassName(value);
                             setLayout(value === 'paths' ? 'grid' : 'circle');
                         }}
@@ -118,7 +115,11 @@ export default function ClassGraphGenerator({
                 </div>
             </section>
 
-            {graphClassName && <RippleButton className="bg-blue-500 hover:bg-blue-500">Gerar Grafo</RippleButton>}
+            {graphClassName &&
+                <Button className="bg-blue-500 cursor-pointer hover:bg-blue-500">
+                    Gerar Grafo
+                </Button>
+            }
         </form>
     );
 }

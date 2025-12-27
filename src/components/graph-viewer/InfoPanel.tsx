@@ -1,58 +1,14 @@
 import { motion } from "motion/react";
 import { Card, CardContent } from "../ui/card";
 import { useGraph } from "@/contexts/GraphContext";
-import { HexadecimalColors } from "./ViewerUtils";
-import { PiHandTapLight, PiMouseScrollLight } from "react-icons/pi";
+import { getColoringByColor, HexadecimalColors } from "./ViewerUtils";
+import { PiHandTapLight } from "react-icons/pi";
 import { HiCursorClick } from "react-icons/hi";
-import { BsCircleFill, BsShiftFill } from "react-icons/bs";
-import { Modes } from "@/types";
-import { InfoIcon } from "lucide-react";
+import { BsCircleFill } from "react-icons/bs";
+import { ActionMode } from "@/types";
+import { Color, GraphElement } from "@/lib/graphs/types";
 
-const onlyMobile = "flex gap-2 items-center lg:hidden";
-const onlyDesktop = "gap-2 hidden items-center lg:flex";
-const bothDevices = "flex gap-2 items-center";
-
-export const InstructionsText = () => (
-    <div className="flex flex-col gap-2">
-        <div className={onlyDesktop}>
-            <PiMouseScrollLight size={30} />
-            Utilize o scroll para aumentar/diminuir o zoom
-        </div>
-
-        <div className={onlyDesktop}>
-            <HiCursorClick size={30} />
-            <div>
-                Clique em um elemento do grafo para selecioná-lo
-                <span className="text-gray-700 text-sm"> (a seleção é cumulativa)</span>
-            </div>
-        </div>
-
-        <div className={onlyMobile}>
-            <PiHandTapLight size={30} />
-            <div>
-                Toque em um elemento do grafo para selecioná-lo
-                <span className="text-gray-700 text-sm"> (a seleção é cumulativa)</span>
-            </div>
-        </div>
-
-        <div className={onlyDesktop}>
-            <BsShiftFill size={30} />
-            Shift + Clique arrastado cria uma caixa que seleciona os elementos contidos nela
-        </div>
-
-        <div className={onlyMobile}>
-            <PiHandTapLight size={25} />
-            Toque para interagir com um elemento do grafo
-        </div>
-
-        <div className={bothDevices}>
-            <InfoIcon size={30} />
-            Caso precise, você poderá acessar essas informações novamente pelo botão &quot;Instruções&quot; no menu
-        </div>
-    </div>
-);
-
-const modesConfig: Record<Modes, { title: string, instruction: string }> = {
+const modesConfig: Record<ActionMode, { title: string, instruction: string }> = {
     view: {
         title: "",
         instruction: ""
@@ -72,14 +28,11 @@ const modesConfig: Record<Modes, { title: string, instruction: string }> = {
 };
 
 
-interface ColoringPanelProps {
-    elementColors: string[]
-}
-
-export default function InfoPanel({
-    elementColors
-}: ColoringPanelProps) {
+export default function InfoPanel() {
     const { graph, graphView } = useGraph();
+
+    const totalColoringByColor = getColoringByColor(graph.totalColoring || new Map());
+    const displayedColoringByColor = getColoringByColor(graphView.displayedColoring);
 
     return (
         <motion.section
@@ -107,7 +60,7 @@ export default function InfoPanel({
                                         animate={{ opacity: 1 }}
                                         transition={{ duration: 1 }}
                                     >
-                                        {graph.totalColoring.length}
+                                        {totalColoringByColor.size}
                                     </motion.span>
                                 </div>
                             }
@@ -119,12 +72,12 @@ export default function InfoPanel({
                                     </span>
 
                                     <span>
-                                        {elementColors.length}
+                                        {displayedColoringByColor.size}
                                     </span>
                                 </div>
 
                                 <div className="flex flex-wrap gap-2 lg:p-0 p-2 rounded">
-                                    {elementColors.map((elementColor) => {
+                                    {displayedColoringByColor.keys().toArray().sort((a, b) => Number(a) - Number(b)).map((elementColor) => {
                                         const color = Number(elementColor) - 1;
 
                                         return (
@@ -143,10 +96,10 @@ export default function InfoPanel({
                         </div>
                     </section>
 
-                    {graphView.mode !== "view" && (
+                    {graphView.actionMode !== "view" && (
                         <section className="flex flex-col gap-4">
                             <div className="border-b-2 bg-gray-100 border-blue-500 font-semibold pl-2 px-4 py-2 rounded text-lg">
-                                Modo {modesConfig[graphView.mode].title}
+                                Modo {modesConfig[graphView.actionMode].title}
                             </div>
 
                             <div className="flex gap-2 items-center">
@@ -156,11 +109,11 @@ export default function InfoPanel({
                                 <p>
                                     <span className="hidden lg:inline">Clique </span>
                                     <span className="inline lg:hidden">Toque </span>
-                                    {modesConfig[graphView.mode].instruction}
+                                    {modesConfig[graphView.actionMode].instruction}
                                 </p>
                             </div>
 
-                            {graphView.mode === "coloring" && (
+                            {graphView.actionMode === "coloring" && (
                                 <>
                                     <div className="flex gap-2 items-center">
                                         <HiCursorClick className="hidden lg:flex" size={60} />
@@ -184,14 +137,6 @@ export default function InfoPanel({
 
                         </section>
                     )}
-
-                    {/* <section className="flex-col gap-4 hidden lg:flex">
-                        <p className="border-b-2 bg-gray-100 border-blue-500 font-semibold pl-2 px-4 py-2 rounded text-lg">
-                            Instruções
-                        </p>
-
-                        <InstructionsText />
-                    </section> */}
                 </CardContent>
             </Card>
         </motion.section>

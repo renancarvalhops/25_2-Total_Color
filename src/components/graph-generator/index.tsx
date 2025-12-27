@@ -3,7 +3,7 @@ import { ReactNode, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import ClassGraphGenerator from "./ClassGraphGenerator";
 import FreeGraphGenerator from "./FreeGraphGenerator";
-import { GraphModes } from "@/types";
+import { GraphMode } from "@/types";
 
 export const layouts = [
     { value: 'random', label: 'Aleatório' },
@@ -13,7 +13,7 @@ export const layouts = [
 
 interface GraphGeneratorProps {
     children?: ReactNode,
-    graphMode: GraphModes
+    graphMode: GraphMode
 }
 
 export default function GraphGenerator({
