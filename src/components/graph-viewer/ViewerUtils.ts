@@ -1,5 +1,10 @@
+import CompleteGraph from "@/lib/graphs/classes/CompleteGraph";
+import CycleGraph from "@/lib/graphs/classes/CycleGraph";
+import { GraphClass } from "@/lib/graphs/classes/GraphClass";
+import PathGraph from "@/lib/graphs/classes/PathGraph";
 import { Color, Coloring, GraphElement } from "@/lib/graphs/types";
 import { mod } from "@/lib/utils";
+import { GraphClassName } from "@/types";
 
 class HexadecimalColors {
     private static hexColors = [
@@ -70,4 +75,15 @@ const getColoringByColor = (coloring: Coloring): Map<Color, GraphElement[]> => {
     return coloringByColor;
 }
 
-export { HexadecimalColors, convertToCyElementId, convertToElementId, getColoringByColor }
+const getGraphClassName = (graph: GraphClass): GraphClassName | "" => {
+    if (graph instanceof PathGraph)
+        return "paths";
+    else if (graph instanceof CycleGraph)
+        return "cycles";
+    else if (graph instanceof CompleteGraph)
+        return "completes";
+    else
+        return "";
+}
+
+export { HexadecimalColors, convertToCyElementId, convertToElementId, getColoringByColor, getGraphClassName }
