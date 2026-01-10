@@ -130,8 +130,8 @@ export default function InfoPanel() {
                                     <div className="flex gap-2">
                                         <h3>Referências:</h3>
 
-                                        {graphClassInfo[getGraphClassName(graph)].references.map(reference => (
-                                            <span>
+                                        {graphClassInfo[getGraphClassName(graph)].references.map((reference, index) => (
+                                            <span key={index}>
                                                 {reference}
                                             </span>
                                         ))}
