@@ -8,7 +8,7 @@ import { BsCircleFill } from "react-icons/bs";
 import { ActionMode, GraphClassName } from "@/types";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { MinusIcon, PlusIcon } from "lucide-react";
+import { DotIcon, ExternalLinkIcon, MinusIcon, PlusIcon } from "lucide-react";
 import { GraphClass } from "@/lib/graphs/classes/GraphClass";
 
 const modesConfig: Record<ActionMode, { title: string, instruction: string }> = {
@@ -30,21 +30,57 @@ const modesConfig: Record<ActionMode, { title: string, instruction: string }> = 
     },
 };
 
-const graphClassInfo: Record<GraphClassName | "", { title: string, denotation: string, references: string[]}> = {
+const graphClassInfo: Record<GraphClassName | "", {
+    title: string,
+    denotation: string,
+    references: {
+        name: string,
+        author: string,
+        link: string
+    }[]
+}> = {
     paths: {
         title: "Caminhos",
         denotation: "P",
-        references: []
+        references: [
+            {
+                name: "O problema da coloração total em classes de grafos",
+                author: "Christiane Neme Campos",
+                link: "https://www.repositorio.unicamp.br/Busca/Download?codigoArquivo=489028"
+            }
+        ]
     },
     cycles: {
         title: "Ciclos",
         denotation: "C",
-        references: []
+        references: [
+            {
+                name: "Total Colourings of Graphs",
+                author: "Hian-Poh Yap",
+                link: "https://link.springer.com/book/10.1007/BFb0092895"
+            },
+            {
+                name: "O problema da coloração total em classes de grafos",
+                author: "Christiane Neme Campos",
+                link: "https://www.repositorio.unicamp.br/Busca/Download?codigoArquivo=489028"
+            }
+        ]
     },
     completes: {
         title: "Completos",
         denotation: "K",
-        references: []
+        references: [
+            {
+                name: "Total Colourings of Graphs",
+                author: "Hian-Poh Yap",
+                link: "https://link.springer.com/book/10.1007/BFb0092895"
+            },
+            {
+                name: "Sobre coloração total dos grafos circulantes",
+                author: "Mauro Nigro Alves Junior",
+                link: "https://www.bdtd.uerj.br:8443/bitstream/1/21045/2/Disserta%C3%A7%C3%A3o%20-%20Mauro%20Nigro%20Alves%20Junior%20-%202021%20-%20Completa.pdf"
+            }
+        ]
     },
     "": {
         title: "",
@@ -127,14 +163,27 @@ export default function InfoPanel() {
                                         </span>
                                     </div>
 
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-col gap-2">
                                         <h3>Referências:</h3>
 
-                                        {graphClassInfo[getGraphClassName(graph)].references.map((reference, index) => (
-                                            <span key={index}>
-                                                {reference}
-                                            </span>
-                                        ))}
+                                        <div className="flex flex-col gap-2 text-sm text-gray-800">
+                                            {graphClassInfo[getGraphClassName(graph)].references.map((reference, index) => (
+                                                <a
+                                                    key={index}
+                                                    className="border-1 cursor-pointer duration-200 flex flex-col gap-1 p-2 rounded hover:border-blue-500"
+                                                    href={reference.link}
+                                                    target="_blank"
+                                                >
+                                                    <span className="font-semibold">
+                                                        {reference.name}
+                                                    </span>
+
+                                                    <span>
+                                                        {reference.author}
+                                                    </span>
+                                                </a>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             )}
